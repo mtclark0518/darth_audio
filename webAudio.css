@@ -1,0 +1,200 @@
+* {
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+}
+
+.wrapper {
+    position: relative;
+    width: 480px;
+    height: 480px;
+    border: 1px solid rgb(50, 50, 50);
+    margin: 0 auto;
+    background: black;
+}
+
+.element {
+    border: 1px solid black;
+}
+
+div#top-controls {
+    width: 300px;
+    /* margin: 10% auto 0; */
+    /* position: relative; */
+}
+
+div.top {
+    /* display: inline-block; */
+    display: flex;
+    flex-direction: column;
+}
+
+div#slide-container {
+    position: absolute;
+    justify-content: space-between;
+    top: 25px;
+    left: 105px;
+    width: 125px;
+    height: 240px;
+    border: 1px solid black;
+    margin: auto
+}
+
+div.slide {
+    height: 50px;
+    width: 120px;
+    background: rgba(88, 89, 88, 1.0)
+}
+
+div#button-container {
+    position: absolute;
+    justify-content: space-around;
+    top: 40px;
+    right: 105px;
+    width: 125px;
+    height: 200px;
+    border: 1px solid black;
+}
+
+ul#switch-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    bottom: 0px;
+    left: 100px;
+    padding: 0;
+    height: 175px;
+    width: 280px;
+    border: 1px solid black;
+}
+
+li.switch {
+    width: 50px;
+    height: 170px;
+    display: inline-block;
+    text-align: center;
+    background: rgba(88, 89, 88, 1.0);
+}
+
+.cnvBTN {
+    margin: 6px auto;
+}
+
+.cnv {
+    margin: 5px auto 0 15px;
+}
+
+.effect-knob {
+    display: inline-block;
+    flex-grow: 1;
+}
+
+#visualizer-container {}
+
+#delay-effect-container {
+    display: flex;
+}
+
+#reverb-effect-container {
+    display: flex;
+}
+
+.control-button {
+    display: block;
+}
+
+#play-stop-pause-container {
+    left: 6%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+button#playbtn,
+button#stopbtn {
+    background: transparent;
+    width: 100%;
+    height: 60px;
+}
+
+.icon-play {
+    background: url('assets/play.svg') no-repeat;
+    height: 32px;
+}
+
+.icon-stop {
+    background: url('assets/stop.svg') no-repeat;
+    height: 32px;
+}
+
+#master-gain-container {
+    right: 30%;
+}
+
+#tempo-slider-container {
+    left: 30%;
+    text-align: center;
+}
+
+#eq-container {
+    right: 6%;
+}
+
+.eq-knob {
+    width: 30px;
+    margin: 1px auto 1px;
+}
+
+input {
+    display: none;
+}
+
+input#audioFile {
+    display: initial;
+}
+
+div#effect1-gain,
+div#effect2-gain,
+div#effect1-send,
+div#effect2-send {
+    margin: auto;
+}
+
+
+/* VOLUME LED STYLES  */
+
+.powerLED {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 30px;
+    height: 400px;
+    background: rgba(88, 89, 88, 1.0);
+    margin: 20px 25px 0 25px;
+}
+
+.powerLED:nth-of-type(2) {
+    float: right;
+}
+
+.LED {
+    margin: auto;
+}
+
+.active {
+    background: rgba(200, 251, 253, 1.0);
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    transition: all 1500ms ease;
+    box-shadow: 0 0 25px 2px rgba(221, 253, 253, 1.0);
+}
+
+.inactive {
+    background: rgba(0, 0, 0, 1.0);
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    transition: all 500ms ease-out;
+    box-shadow: 0 0 0 0 black;
+}
