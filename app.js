@@ -36,6 +36,7 @@ var compressorNode = audioContext.createDynamicsCompressor();
 
 //analyzes audio context for visuals
 var analyserNode = audioContext.createAnalyser();
+analyserNode.smoothingTimeConstant = 0.90;
 
 // Equalizier component - 4 biquadFilters creating a 3-band eq with a low pass filter sweep
 // this is my bassline...my bassline...move move your wasteline...to my bassline
@@ -281,7 +282,7 @@ function visualize() {
     // get our data to plot from analyzer node
     // provides us with real time frequency and time-domain analysis information
     // fft fast fourier transform.... determine freq domain
-    analyserNode.fftSize =128;
+    analyserNode.fftSize = 1024;
 
     // half the fftSize - represents the datavalues we plot
     var bufferLength = analyserNode.frequencyBinCount;
@@ -300,17 +301,17 @@ function visualize() {
         canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
         // visual width + color 
         canvasContext.lineWidth = 2;
-        canvasContext.strokeStyle = 'rgba(236, 2, 55, 1.0)';
+        canvasContext.strokeStyle = 'rgb(236, 2, 55)';
         // starts to draw our wave
         canvasContext.beginPath();
         // chops canvas into equal width sections
-        const sliceWidth = WIDTH * 1.0 / analyserNode.fftSize;
+        const sliceWidth = WIDTH * 1.0 / bufferLength;
         // x-axis
         let x = 0;
         
         for (let i = 0; i < bufferLength; i++) {
-            // each data point of our waveform divided by the fftSize
-            let v = dataArray[i] / (bufferLength * 2);
+
+            let v = dataArray[i] / 128;
             // y-axis point
             let y = v * HEIGHT / 2;
 
