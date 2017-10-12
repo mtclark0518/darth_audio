@@ -1,9 +1,13 @@
 var playButton = $('#playbtn');
+
+var powerButton = $('#cnv1-container');
+var powerSVG = $('.power');
 var input = $('#audioFile');
 var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
 var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
 var source = null; // This is the BufferSource containing the buffered audio
+var powerLED;
 
 
 
@@ -14,22 +18,9 @@ var masterGain = audioContext.createGain();
 var compressorNode = audioContext.createDynamicsCompressor();
 //analyzes audio context
 var analyserNode = audioContext.createAnalyser();
-// var analyserNode2 = audioContext.createAnalyser();
-// analyserNode2.minDecibels = -250;
-// analyserNode2.maxDecibels = -30;
-// analyserNode2.smoothingTimeConstant = 0.85;
 var sourceGain = audioContext.createGain();
 var mainGain = audioContext.createGain();
-// var effect1Gain = audioContext.createGain();
-// var effect2Gain = audioContext.createGain();
-// send effects for the source
-// var effectSend1 = audioContext.createGain();
-// var effectSend2 = audioContext.createGain();
 
-// var delayNode = audioContext.createDelay(); //s1
-    // delayNode.delayTime.value = effect1Gain.gain.value;
-
-// var reverbNode = audioContext.c reateConvolver(); //s2
 
 // creating the equalizer filters
 var low = audioContext.createBiquadFilter();
@@ -53,75 +44,26 @@ filter.type = "lowpass";
 filter.Q.value = 0.71;    
 
 
-//-------------------------------------------
-//-------------------------------------------
-//CANVAS VISUALIZERS
-//-------------------------------------------
-//-------------------------------------------
-var canvas = $('#visualizer')[0];
-console.log(canvas);
-var canvasContext = canvas.getContext("2d");
+function powerIsOn(){
+    console.log('fugittaboutit')
+    var pwr = $(powerButton).hasClass('on') ? true : false;
+    console.log(pwr)
+    return pwr;
+}
 
-//create our mixer
-function visualize() {
-    WIDTH = canvas.width;
-    HEIGHT = canvas.height;
-    console.log('height = ' +  HEIGHT);
-    console.log('width = ' +  WIDTH);
-    canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
-
-    analyserNode.fftSize =128;
-    var bufferLength = analyserNode.frequencyBinCount;
-    console.log(analyserNode.fftSize);
-    console.log(bufferLength);
-    var dataArray = new Uint8Array(bufferLength);
-    console.log(dataArray);
-    
-
-    function draw() {
-        drawVisual = requestAnimationFrame(draw);
-        analyserNode.getByteTimeDomainData(dataArray);
-        // analyserNode.getByteFrequencyData(dataArray);
-        // console.log(analyserNode.getByteFrequencyData(dataArray));
-        canvasContext.fillStyle = 'rgb(0, 0, 0)';
-        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
-        canvasContext.lineWidth = 2;
-        canvasContext.strokeStyle = 'rgb(255,0,0)';
-        canvasContext.beginPath();
-        const sliceWidth = WIDTH * 1.0 / bufferLength;
-        let x = 0;
-        
-        for (let i = 0; i < bufferLength; i++) {
-            let v = dataArray[i] /128.0;
-            let y = v * HEIGHT / 2;
-
-            if (i === 0) {
-                canvasContext.moveTo(x, y);
-            } else {
-                canvasContext.lineTo(x, y);
-            }
-            x += sliceWidth;
+function initPlayEvent(){
+    var fileInput = input[0];
+        console.log(fileInput[0]); 
+        if (fileInput.files.length > 0 && ["audio/mpeg", "audio/mp3"].includes(fileInput.files[0].type)) {
+            // object that has downloaded an MP3 file from the internet, or any other ArrayBuffer containing MP3 data. 
+            createArrayBuffer(fileInput.files[0], function (mp3ArrayBuffer) {
+                // Pass the ArrayBuffer to the decode method
+                decodeArrayBuffer(mp3ArrayBuffer);              
+            });  
+        } else {
+            alert("Error! No attached file or attached file was of the wrong type!");
         }
-
-        canvasContext.lineTo(canvas.width, canvas.height/2);
-        canvasContext.stroke();
-    }
-    draw();
 }
-
-function triggerVisuals(){
-    visualize();
-    // visualize2();
-}
-// web audio component connections to make an audio grid
-function connectMixer(){
-    triggerVisuals();
-    source.connect(sourceGain).connect(filter).connect(low).connect(mid).connect(high).connect(mainGain).connect(compressorNode).connect(masterGain).connect(analyserNode).connect(audioContext.destination);
-    source.start(0);
-    
- // tell the audio buffer to play from the beginning
-}
-
 
 // Used the File API in order to asynchronously obtain the bytes of the file that the user selected in the 
 // file input box. The bytes are returned using a callback method that passes the resulting ArrayBuffer. 
@@ -134,6 +76,7 @@ function createArrayBuffer(selectedFile, callback) {
     };
     reader.readAsArrayBuffer(selectedFile);
 }
+
 function decodeArrayBuffer(mp3ArrayBuffer) {
     audioContext.decodeAudioData(mp3ArrayBuffer, function (decodedAudioData) {
               
@@ -144,13 +87,19 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
         } 
         source = audioContext.createBufferSource();
         source.buffer = decodedAudioData;
-        console.log(source.playbackRate.value);
-        source.loop = true;        
         
         connectMixer();
     }); 
 }
 
+// web audio component connections to make an audio grid
+function connectMixer(){
+    triggerVisuals();
+    source.connect(sourceGain).connect(filter).connect(low).connect(mid).connect(high).connect(mainGain).connect(compressorNode).connect(masterGain).connect(analyserNode).connect(audioContext.destination);
+    // tell the audio buffer to play from the beginning
+    source.start(0);
+    
+}
 
 function stopPlayback(){
   if (source !== null) {
@@ -221,9 +170,70 @@ function createEffectControl(controlName, elemID, inputValueID, orientation, ran
         }
     });
 }
+
+
+//-------------------------------------------
+//-------------------------------------------
+//CANVAS VISUALIZERS
+//-------------------------------------------
+//-------------------------------------------
+var canvas = $('#visualizer')[0];
+console.log(canvas);
+var canvasContext = canvas.getContext("2d");
+
+//create our mixer
+function visualize() {
+    WIDTH = canvas.width;
+    HEIGHT = canvas.height;
+    console.log('height = ' +  HEIGHT);
+    console.log('width = ' +  WIDTH);
+    canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
+
+    analyserNode.fftSize =128;
+    var bufferLength = analyserNode.frequencyBinCount;
+    console.log(analyserNode.fftSize);
+    console.log(bufferLength);
+    var dataArray = new Uint8Array(bufferLength);
+    console.log(dataArray);
+    
+
+    function draw() {
+        drawVisual = requestAnimationFrame(draw);
+        analyserNode.getByteTimeDomainData(dataArray);
+        // analyserNode.getByteFrequencyData(dataArray);
+        // console.log(analyserNode.getByteFrequencyData(dataArray));
+        canvasContext.fillStyle = 'rgb(0, 0, 0)';
+        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+        canvasContext.lineWidth = 2;
+        canvasContext.strokeStyle = 'rgb(255,0,0)';
+        canvasContext.beginPath();
+        const sliceWidth = WIDTH * 1.0 / bufferLength;
+        let x = 0;
+        
+        for (let i = 0; i < bufferLength; i++) {
+            let v = dataArray[i] /128.0;
+            let y = v * HEIGHT / 2;
+
+            if (i === 0) {
+                canvasContext.moveTo(x, y);
+            } else {
+                canvasContext.lineTo(x, y);
+            }
+            x += sliceWidth;
+        }
+
+        canvasContext.lineTo(canvas.width, canvas.height/2);
+        canvasContext.stroke();
+    }
+    draw();
+}
+
+function triggerVisuals(){
+    visualize();
+}
+
 function $createLEDContainer(){
-    const powerLED = $('<div>').addClass('powerLED');
-    powerLED.appendTo(".wrapper");
+    powerLED = $('<div>').addClass('powerLED mixer-item');
     for(let i = 0; i < 10; i++){
         let min = (i * 10) + 1;
         let led = $('<div>').addClass('LED').addClass('inactive').data("min", min);
@@ -231,41 +241,44 @@ function $createLEDContainer(){
         $(led).appendTo(powerLED);
         console.log('updated powerLED');
     }
-    const LEDs = powerLED[0].children;
-    isLEDActive(LEDs);
 }
 
 //sets class active class on each led based on master gain value
 function isLEDActive(LEDs) {
-    let amount = masterGain.gain.value * 100;
-    $(LEDs).each(function() {
-        let min = $(this).data().min;
-        console.log(min);
-        if (min <= amount) {
-            $(this).removeClass('inactive').removeClass('active').addClass('active');
-        } else {
-            $(this).removeClass('active').removeClass('inactive').addClass('inactive');
-        }
-    });
+    if(powerIsOn()){
+        let amount = masterGain.gain.value * 100;
+        $(LEDs).each(function() {
+            let min = $(this).data().min;
+            console.log(min);
+            if (min <= amount) {
+                $(this).removeClass('inactive').removeClass('active').addClass('active');
+            } else {
+                $(this).removeClass('active').removeClass('inactive').addClass('inactive');
+            }
+        });
+    } 
 }
-
-
 
 $(document).ready(function(){
 
     $createLEDContainer();
+    $(powerLED).appendTo(".mixer");
+ 
     $createLEDContainer();
+    $(powerLED).prependTo(".mixer");
+
+
     //createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step )
     createEffectControl(masterGain, '#master-gain', '#amount', 'vertical', 'min', 0, 1, 1, 0.1);
     createEffectControl(sourceGain, '#source-gain', '#source-input', 'vertical', 'min', 0, 1, 1, 0.1);
     createEffectControl(mainGain, '#main-gain', '#main-input', 'horizontal', 'min', 0, 1, 1, 0.1);
    
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle)
-    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 15, 5, -12, 12, 0, 0.2, 315, 225);
-    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 15, 5, -12, 12, 0, 0.2, 315, 225);
-    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 15, 5, -12, 12, 0, 0.2, 315, 225);
+    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 16, 7, -12, 12, 0, 0.2, 315, 225);
+    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 16, 7, -12, 12, 0, 0.2, 315, 225);
+    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 16, 8, -12, 12, 0, 0.2, 315, 225);
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle, step)
-    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 25, 10, 10, 20050, 20050, 315, 90, 500);
+    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 24, 12, 10, 20050, 20050, 315, 90, 500);
 
     // create tempo slide from the source playbackRate
 
@@ -284,28 +297,37 @@ $(document).ready(function(){
     });
     $( "#tempo-input" ).val( $( "#tempo-slider" ).slider( "value" ) );
 
+    $(powerButton).click(function(event) {
+        $(this).toggleClass('on');
+        $(powerSVG).toggleClass('on');
+        if(powerIsOn()){
+            let myLEDs = $('.powerLED');
+            let myOtherLEDs = myLEDs[1].children;            
+            myLEDs = myLEDs[0].children;
+            isLEDActive(myLEDs);
+            isLEDActive(myOtherLEDs);
+
+        } else if(!powerIsOn()){
+            let myLEDs = $('.powerLED');
+            myLEDs.removeClass('active');
+        }
+    })
+
 
     // Assign event handler for when the 'Play' button is clicked
     $(playButton).click(function(event) {
         event.stopPropagation();
-        // I've added two basic validation checks here, but in a real world use case you'd probably be a little more stringient. 
-        // Be aware that Firefox uses 'audio/mpeg' as the MP3 MIME type, Chrome uses 'audio/mp3'. 
-        var fileInput = input[0];
-        console.log(fileInput[0]); 
-        if (fileInput.files.length > 0 && ["audio/mpeg", "audio/mp3"].includes(fileInput.files[0].type)) {
-            // object that has downloaded an MP3 file from the internet, or any other ArrayBuffer containing MP3 data. 
-            createArrayBuffer(fileInput.files[0], function (mp3ArrayBuffer) {
-                // Pass the ArrayBuffer to the decode method
-                decodeArrayBuffer(mp3ArrayBuffer);              
-            });  
-        } 
-        else alert("Error! No attached file or attached file was of the wrong type!");
+        if(powerIsOn()){
+            initPlayEvent();
+        } else {
+            alert('turn the power on dumb dumb')
+        }
     });
 
     // mute function to store value and set new value;
     $(muteButton).click(function(event) {
-        event.preventDefault();
-        toggleMute();
+        // event.preventDefault();
+        // toggleMute();
      });
 
     //event handler for when the "stop button is pushed"

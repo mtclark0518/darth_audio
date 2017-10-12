@@ -2,30 +2,63 @@
     box-sizing: border-box;
     list-style: none;
     text-decoration: none;
+        font-family: 'Death-Star';
+
+}
+@font-face {
+    font-family: 'Death-Star';
+    src:url('font/Death-Star.ttf.woff') format('woff'),
+        url('font/Death-Star.ttf.svg#Death-Star') format('svg'),
+        url('font/Death-Star.ttf.eot'),
+        url('font/Death-Star.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
 }
 
-.wrapper {
-    position: relative;
+body{
+    display: flex;
+    justify-content: center;
+}
+
+.mixer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
     width: 480px;
     height: 480px;
     border: 1px solid rgb(50, 50, 50);
-    margin: 0 auto;
     background: black;
+}
+
+#mixer-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
 }
 
 .element {
     border: 1px solid black;
 }
 
+
 div#top-controls {
     display: flex;
     flex-direction: row;
-    /* margin: 10% auto 0; */
-    /* position: relative; */
+    justify-content: space-around;
+}
+
+div#bottom-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
 div#slide-container {
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     width: 125px;
     height: 240px;
     border: 1px solid black;
@@ -38,43 +71,51 @@ div.slide {
 }
 
 div#button-container {
-    justify-content: space-around;
-    width: 125px;
-    height: 200px;
-    border: 1px solid black;
-}
-
-ul#switch-container {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    bottom: 0px;
-    left: 100px;
-    padding: 0;
-    height: 175px;
-    width: 280px;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end;
+    width: 125px;
     border: 1px solid black;
 }
 
-li.switch {
-    width: 50px;
+div.switch {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 70px;
     height: 170px;
-    display: inline-block;
-    text-align: center;
     background: rgba(88, 89, 88, 1.0);
 }
-
-
 
 .cnv {
     width: 100%;
     display: flex;
     height: 76px;
-    background: red;
+    background: rgba(0, 38, 201, 1.0);
     justify-content: center;
 }
 div#cnv1-container{
-    background: blue;
+    background: rgba(10, 10, 10, 1.0);
+    box-shadow: 0 0 0px 0px rgba(10, 10, 10, 0.01);
+    transition: all ease 400ms;
+    transition-delay: 200ms;
+}
+div#cnv1-container.on {
+    background: rgba(236, 2, 55, 1.0);
+    box-shadow: 0 0 5px 1px rgba(255, 2, 59, 1.0);
+    transition: all ease 400ms;
+    transition-delay: 200ms;
+}
+.power{
+    fill: rgba(102, 1, 23, 1.0);
+    transition: all ease-in-out 800ms;
+    transition-delay: 500ms;
+}
+.power.on{
+    fill: rgba(0,50,50,1);
+    transition: all ease-in-out 700ms;
+    transition-delay: 100ms;
 }
 
 #pwrbtn {
@@ -82,16 +123,7 @@ div#cnv1-container{
     width: 50%;
     align-self: center;
     background: transparent;
-    /*background: url('assets/power.svg') no-repeat;*/
-
 }
-.power{
-    fill: rgba(255,255,255,1);
-}
-.power.on{
-    fill: rgba(0,0,0,1);
-}
-
 
 .effect-knob {
     display: inline-block;
@@ -99,23 +131,11 @@ div#cnv1-container{
 }
 
 
-#delay-effect-container {
-    display: flex;
-}
-
-#reverb-effect-container {
-    display: flex;
-}
-
-
 #play-stop-pause-container {
-    /*left: 6%;*/
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
-
-
 
 button#playbtn,
 button#stopbtn {
@@ -123,7 +143,6 @@ button#stopbtn {
     width: 100%;
     height: 60px;
 }
-
 
 .icon-play {
     background: url('assets/play.svg') no-repeat;
@@ -136,21 +155,30 @@ button#stopbtn {
 }
 
 #master-gain-container {
-    /*right: 30%;*/
 }
 
 #tempo-slider-container {
-    /*left: 30%;*/
-    text-align: center;
 }
 
 #eq-container {
-    /*right: 6%;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .eq-knob {
-    width: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
     margin: 1px auto 1px;
+}
+.eq-label {
+    display: flex;
+    align-items: center;
+    color: white;
+    width: 18px;
+    font-family: 'Death-Star';
 }
 
 input {
@@ -160,23 +188,14 @@ input {
 input#audioFile {
     display: initial;
 }
-
-
-
-
 /* VOLUME LED STYLES  */
-
 .powerLED {
     display: flex;
     flex-direction: column-reverse;
     width: 30px;
     height: 400px;
     background: rgba(88, 89, 88, 1.0);
-    margin: 20px 25px 0 25px;
-}
-
-.powerLED:nth-of-type(2) {
-    float: right;
+    margin: 20px;
 }
 
 .LED {
@@ -200,3 +219,4 @@ input#audioFile {
     transition: all 500ms ease-out;
     box-shadow: 0 0 0 0 black;
 }
+

@@ -11,88 +11,89 @@
 </head>
 
 <body>
-    <div class="wrapper">
-        <div id='top-controls'>
-            <div id="slide-container" class='top'>
-                <div id="visualizer-container" class="slide element">
-                    <canvas id="visualizer" class="canvas" width="120" height="50"></canvas>
-                </div>
-                <div id="delay-effect-container" class="slide element">
+    <div class="mixer">
+        <div id='mixer-group' class='mixer-controls'>
+            <div id='top-controls' class='controls'>
+                <div id="slide-container" class='top'>
+                    <div id="visualizer-container" class="slide element">
+                        <canvas id="visualizer" class="canvas" width="120" height="50"></canvas>
+                    </div>
+                    <div id="delay-effect-container" class="slide element">
 
-                    <div class="effect-knob">
-                        <label for="">coming soon</label>
+                        <div class="effect-knob">
+                            <label for="">coming soon</label>
+                        </div>
+                    </div>
+
+                    <div id="reverb-effect-container" class="slide element">
+                        <div class="effect-knob">
+                            <input type="text" id="filter-input">
+                            <div id="filter-slider"></div>
+                        </div>
+                        <div class="effect-knob">
+
+                            <label for="">Filter</label>
+
+                        </div>
                     </div>
                 </div>
 
-                <div id="reverb-effect-container" class="slide element">
-                    <div class="effect-knob">
-                        <input type="text" id="filter-input">
-                        <div id="filter-slider"></div>
-                    </div>
-                    <div class="effect-knob">
-
-                        <label for="">Low Pass</label>
-
+                <div id="button-container" class="top">
+                    <div id="cnv2-container" class="cnv element "></div>
+                    <div id="cnv1-container" class="cnv element">
+                        <div id="pwrbtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="power" viewBox="0 0 512 512">
+                                <path d="M388.5 46.3C457.9 90.3 504 167.8 504 256c0 136.8-110.8 247.7-247.5 248C120 504.3 8.2 393 8 256.4 7.9 168 54 90.3 123.5 46.3c5.8-3.7 13.5-1.8 16.9 4.2l11.8 20.9c3.1 5.5 1.4 12.5-3.9 15.9C92.8 122.9 56 185.1 56 256c0 110.5 89.5 200 200 200s200-89.5 200-200c0-70.9-36.8-133.1-92.3-168.6-5.3-3.4-7-10.4-3.9-15.9l11.8-20.9c3.3-6.1 11.1-7.9 16.9-4.3zM280 276V12c0-6.6-5.4-12-12-12h-24c-6.6 0-12 5.4-12 12v264c0 6.6 5.4 12 12 12h24c6.6 0 12-5.4 12-12z"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div id='bottom-controls' class='controls'>
+                <div id="eq-container" class="switch element">
+                    <div class="eq-knob">
+                        <div class='eq-label'>h</div>
+                        <input type="text" id="high-input">
+                        <div id="high-slider"></div>
+                    </div>
 
-            <div id="button-container" class="top">
-                <div id="cnv2-container" class="cnv element "></div>
-                <div id="cnv1-container" class="cnv element">
-                    <div id="pwrbtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="power" viewBox="0 0 512 512">
-                            <path d="M388.5 46.3C457.9 90.3 504 167.8 504 256c0 136.8-110.8 247.7-247.5 248C120 504.3 8.2 393 8 256.4 7.9 168 54 90.3 123.5 46.3c5.8-3.7 13.5-1.8 16.9 4.2l11.8 20.9c3.1 5.5 1.4 12.5-3.9 15.9C92.8 122.9 56 185.1 56 256c0 110.5 89.5 200 200 200s200-89.5 200-200c0-70.9-36.8-133.1-92.3-168.6-5.3-3.4-7-10.4-3.9-15.9l11.8-20.9c3.3-6.1 11.1-7.9 16.9-4.3zM280 276V12c0-6.6-5.4-12-12-12h-24c-6.6 0-12 5.4-12 12v264c0 6.6 5.4 12 12 12h24c6.6 0 12-5.4 12-12z"/>
-                        </svg>
+                    <div class="eq-knob">
+                        <div class='eq-label'>m</div>
+                        <input type="text" id="mid-input">
+                        <div id="mid-slider"></div>
+                    </div>
+                    <div class="eq-knob">
+                        <div class='eq-label'>l</div>
+                        <input type="text" id="low-input">
+                        <div id="low-slider"></div>
+                    </div>
+                </div>
+                <div id="master-gain-container" class="switch element">
+                    <label for="">volume</label>
+                    <input type="text" id="amount">
+                    <div id="master-gain" style="height:125px;"></div>
+                </div>
+
+                <div id="tempo-slider-container" class="switch element">
+                    <label for="">tempo</label>
+                    <input type="text" id="tempo-input">
+                    <div id="tempo-slider" style="height:125px;"></div>
+                </div>
+
+
+                <div id="play-stop-pause-container" class="switch element">
+                    <div class="control-button">
+                        <input type="file" id='audioFile'>
+                    </div>
+                    <div class="control-button">
+                        <button type="button" id="playbtn" value="play"><div class="icon-play"></div></button>
+                    </div>
+                    <div class="control-button">
+                        <button type="button" id="stopbtn" value="stop"><div class="icon-stop"></div></button>
                     </div>
                 </div>
             </div>
         </div>
-        <ul id="switch-container">
-            <li id="play-stop-pause-container" class="switch element">
-                <div class="control-button">
-                    <input type="file" id='audioFile'>
-                </div>
-                <div class="control-button">
-                    <button type="button" id="playbtn" value="play"><div class="icon-play"></div></button>
-                </div>
-                <div class="control-button">
-                    <button type="button" id="stopbtn" value="stop"><div class="icon-stop"></div></button>
-                </div>
-            </li>
-            <li id="master-gain-container" class="switch element">
-                <label for="">volume</label>
-                <input type="text" id="amount">
-                <div id="master-gain" style="height:125px;"></div>
-            </li>
-
-            <li id="tempo-slider-container" class="switch element">
-                <label for="">tempo</label>
-                <input type="text" id="tempo-input">
-                <div id="tempo-slider" style="height:125px;"></div>
-            </li>
-
-            <li id="eq-container" class="switch element">
-                <div class="eq-knob">
-                    <label for="">h</label>
-                    <input type="text" id="high-input">
-                    <div id="high-slider"></div>
-                </div>
-
-                <div class="eq-knob">
-                    <label for="">m</label>
-                    <input type="text" id="mid-input">
-                    <div id="mid-slider"></div>
-                </div>
-                <div class="eq-knob">
-                    <label for="">l</label>
-                    <input type="text" id="low-input">
-                    <div id="low-slider"></div>
-                </div>
-
-
-            </li>
-        </ul>
     </div>
 
 
