@@ -241,6 +241,11 @@ input {
     display: none;
 }
 
+canvas#visualizer {
+    width: 100%;
+    height: 50px;
+}
+
 #effect1-container {
     display: flex;
     align-items: center;
