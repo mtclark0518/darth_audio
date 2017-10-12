@@ -302,7 +302,7 @@ function visualize() {
         
         for (let i = 0; i < bufferLength; i++) {
             // each data point of our waveform divided by the fftSize
-            let v = dataArray[i] /bufferLength * 2;
+            let v = dataArray[i] / (bufferLength * 2);
             // y-axis point
             let y = v * HEIGHT / 2;
 
