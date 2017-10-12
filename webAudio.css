@@ -18,26 +18,17 @@
 }
 
 div#top-controls {
-    width: 300px;
+    display: flex;
+    flex-direction: row;
     /* margin: 10% auto 0; */
     /* position: relative; */
 }
 
-div.top {
-    /* display: inline-block; */
-    display: flex;
-    flex-direction: column;
-}
-
 div#slide-container {
-    position: absolute;
     justify-content: space-between;
-    top: 25px;
-    left: 105px;
     width: 125px;
     height: 240px;
     border: 1px solid black;
-    margin: auto
 }
 
 div.slide {
@@ -47,17 +38,13 @@ div.slide {
 }
 
 div#button-container {
-    position: absolute;
     justify-content: space-around;
-    top: 40px;
-    right: 105px;
     width: 125px;
     height: 200px;
     border: 1px solid black;
 }
 
 ul#switch-container {
-    position: absolute;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -77,20 +64,40 @@ li.switch {
     background: rgba(88, 89, 88, 1.0);
 }
 
-.cnvBTN {
-    margin: 6px auto;
-}
+
 
 .cnv {
-    margin: 5px auto 0 15px;
+    width: 100%;
+    display: flex;
+    height: 76px;
+    background: red;
+    justify-content: center;
 }
+div#cnv1-container{
+    background: blue;
+}
+
+#pwrbtn {
+    height: 64px;
+    width: 50%;
+    align-self: center;
+    background: transparent;
+    /*background: url('assets/power.svg') no-repeat;*/
+
+}
+.power{
+    fill: rgba(255,255,255,1);
+}
+.power.on{
+    fill: rgba(0,0,0,1);
+}
+
 
 .effect-knob {
     display: inline-block;
     flex-grow: 1;
 }
 
-#visualizer-container {}
 
 #delay-effect-container {
     display: flex;
@@ -100,16 +107,15 @@ li.switch {
     display: flex;
 }
 
-.control-button {
-    display: block;
-}
 
 #play-stop-pause-container {
-    left: 6%;
+    /*left: 6%;*/
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
+
+
 
 button#playbtn,
 button#stopbtn {
@@ -117,6 +123,7 @@ button#stopbtn {
     width: 100%;
     height: 60px;
 }
+
 
 .icon-play {
     background: url('assets/play.svg') no-repeat;
@@ -129,16 +136,16 @@ button#stopbtn {
 }
 
 #master-gain-container {
-    right: 30%;
+    /*right: 30%;*/
 }
 
 #tempo-slider-container {
-    left: 30%;
+    /*left: 30%;*/
     text-align: center;
 }
 
 #eq-container {
-    right: 6%;
+    /*right: 6%;*/
 }
 
 .eq-knob {
@@ -154,12 +161,7 @@ input#audioFile {
     display: initial;
 }
 
-div#effect1-gain,
-div#effect2-gain,
-div#effect1-send,
-div#effect2-send {
-    margin: auto;
-}
+
 
 
 /* VOLUME LED STYLES  */

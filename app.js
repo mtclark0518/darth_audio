@@ -14,39 +14,43 @@ var masterGain = audioContext.createGain();
 var compressorNode = audioContext.createDynamicsCompressor();
 //analyzes audio context
 var analyserNode = audioContext.createAnalyser();
-var analyserNode2 = audioContext.createAnalyser();
+// var analyserNode2 = audioContext.createAnalyser();
 // analyserNode2.minDecibels = -250;
 // analyserNode2.maxDecibels = -30;
 // analyserNode2.smoothingTimeConstant = 0.85;
 var sourceGain = audioContext.createGain();
 var mainGain = audioContext.createGain();
-var effect1Gain = audioContext.createGain();
-var effect2Gain = audioContext.createGain();
+// var effect1Gain = audioContext.createGain();
+// var effect2Gain = audioContext.createGain();
 // send effects for the source
-var effectSend1 = audioContext.createGain();
-var effectSend2 = audioContext.createGain();
+// var effectSend1 = audioContext.createGain();
+// var effectSend2 = audioContext.createGain();
 
-var delayNode = audioContext.createDelay(); //s1
-    delayNode.delayTime.value = effect1Gain.gain.value;
+// var delayNode = audioContext.createDelay(); //s1
+    // delayNode.delayTime.value = effect1Gain.gain.value;
 
-var reverbNode = audioContext.createConvolver(); //s2
+// var reverbNode = audioContext.c reateConvolver(); //s2
 
 // creating the equalizer filters
 var low = audioContext.createBiquadFilter();
 low.type = "lowshelf";
-low.frequency.value = 300.0;
+low.frequency.value = 500.0;
 low.gain.value = 0.0;
 
 var mid = audioContext.createBiquadFilter();
 mid.type = "peaking";
 mid.frequency.value = 1000.0;
-mid.Q.value = 0.5;
+mid.Q.value = 0.61;
 mid.gain.value = 0.0;
 
 var high = audioContext.createBiquadFilter();
 high.type = "highshelf";
-high.frequency.value = 1800.0;
+high.frequency.value = 2000.0;
 high.gain.value = 0.0;
+
+var filter = audioContext.createBiquadFilter();
+filter.type = "lowpass";
+filter.Q.value = 0.71;    
 
 
 //-------------------------------------------
@@ -105,61 +109,20 @@ function visualize() {
     draw();
 }
 
-const canvas2 = $('#cnvBTN1')[0];
-console.log(canvas2);
-var canvasCtx2 = canvas2.getContext("2d");
-function visualize2() {
-    WIDTH2 = canvas2.width;
-    HEIGHT2 = canvas2.height;
-    console.log('height = ' +  HEIGHT2);
-    console.log('width = ' +  WIDTH2);
-    canvasCtx2.clearRect(0, 0, WIDTH2, HEIGHT2);
-
-    analyserNode2.fftSize =32;
-    var bufferLength2 = analyserNode2.frequencyBinCount;
-    console.log('buffer length = ' + bufferLength2);
-    var dataArray2 = new Uint8Array(bufferLength2);
-    console.log(dataArray2);
-    
-
-    function draw2() {
-        drawVisual = requestAnimationFrame(draw2);
-        analyserNode.getByteFrequencyData(dataArray2);
-
-        canvasCtx2.fillStyle = 'rgb(0, 0, 0)';
-        canvasCtx2.fillRect(0, 0, WIDTH2, HEIGHT2);
-        canvasCtx2.strokeStyle = 'rgb(0,0,255)';
-        var barWidth = (WIDTH2 / bufferLength2) * 2.5;
-        var barHeight;
-        var x = 0;
-
-        for(var i = 0; i < bufferLength2; i++) {
-            barHeight = dataArray2[i];
-            console.log(dataArray2[i]);
-            canvasCtx2.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
-            canvasCtx2.fillRect(x,HEIGHT2-barHeight/2,barWidth,barHeight/2);
-
-            x += barWidth + 1;
-        }
-    }
-    draw2();
-}
 function triggerVisuals(){
     visualize();
-    visualize2();
+    // visualize2();
 }
 // web audio component connections to make an audio grid
 function connectMixer(){
     triggerVisuals();
-    source.connect(sourceGain).connect(low).connect(mid).connect(high).connect(mainGain).connect(compressorNode).connect(masterGain).connect(analyserNode).connect(audioContext.destination);
-    high.connect(delayNode).connect(effectSend1).connect(compressorNode);
-    high.connect(reverbNode).connect(effectSend2).connect(compressorNode);
-    delayNode.connect(effect1Gain);
-    analyserNode2.connect(mainGain);
+    source.connect(sourceGain).connect(filter).connect(low).connect(mid).connect(high).connect(mainGain).connect(compressorNode).connect(masterGain).connect(analyserNode).connect(audioContext.destination);
     source.start(0);
     
  // tell the audio buffer to play from the beginning
 }
+
+
 // Used the File API in order to asynchronously obtain the bytes of the file that the user selected in the 
 // file input box. The bytes are returned using a callback method that passes the resulting ArrayBuffer. 
 function createArrayBuffer(selectedFile, callback) {
@@ -176,7 +139,7 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
               
         // Clear any existing audio source that we might be using
         if (source !== null) {
-            source.disconnect(analyserNode2);
+            source.disconnect(sourceGain);
             source = null; 
         } 
         source = audioContext.createBufferSource();
@@ -220,7 +183,24 @@ function createRoundSlider(name, type, input, sliderType, radius, width, min, ma
         }
     });
 }
-
+function createFilterSweep(name, type, input, sliderType, radius, width, min, max, initValue, stAngle, endAngle, step){
+    $(name).roundSlider({
+        sliderType: sliderType,
+        radius: radius,
+        width: width,
+        min: min,
+        max: max,
+        step: step,
+        value: initValue,
+        startAngle: stAngle,
+        endAngle: endAngle,
+        mouseScrollAction: true,
+        change: function(event){
+            let eq = $(name).data('roundSlider');
+            type.frequency.value = eq.option('value');
+        }
+    });
+}
 function createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step ){
     $(elemID).slider({
         orientation : orientation,
@@ -241,7 +221,6 @@ function createEffectControl(controlName, elemID, inputValueID, orientation, ran
         }
     });
 }
-
 function $createLEDContainer(){
     const powerLED = $('<div>').addClass('powerLED');
     powerLED.appendTo(".wrapper");
@@ -274,7 +253,6 @@ function isLEDActive(LEDs) {
 
 $(document).ready(function(){
 
-
     $createLEDContainer();
     $createLEDContainer();
     //createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step )
@@ -286,13 +264,9 @@ $(document).ready(function(){
     createRoundSlider('#low-slider', low, '#low-input', 'min-range', 15, 5, -12, 12, 0, 0.2, 315, 225);
     createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 15, 5, -12, 12, 0, 0.2, 315, 225);
     createRoundSlider('#high-slider', high, '#high-input', 'min-range', 15, 5, -12, 12, 0, 0.2, 315, 225);
-    createRoundSlider('#effect1-gain', effect1Gain, '#effect1-input', 'min-range', 15, 5, 0, 10, 0, 0.2, 270);
-    createRoundSlider('#effect1-send', effectSend1, '#effect1send-input', 'min-range', 15, 5, 0, 1, 0, 0.01, 270);
-    createRoundSlider('#effect2-gain', effect2Gain, '#effect2-input', 'min-range', 15, 5, 0, 10, 0, 0.5, 270);
-    createRoundSlider('#effect2-send', effectSend2, '#effect2send-input', 'min-range', 15, 5, 0, 1, 0, 0.01, 270);
-    
-    
-    
+    //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle, step)
+    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 25, 10, 10, 20050, 20050, 315, 90, 500);
+
     // create tempo slide from the source playbackRate
 
     $("#tempo-slider" ).slider({
@@ -309,6 +283,7 @@ $(document).ready(function(){
             }
     });
     $( "#tempo-input" ).val( $( "#tempo-slider" ).slider( "value" ) );
+
 
     // Assign event handler for when the 'Play' button is clicked
     $(playButton).click(function(event) {
