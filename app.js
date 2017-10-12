@@ -296,7 +296,7 @@ function visualize() {
         // starts to draw our wave
         canvasContext.beginPath();
         // chops canvas into equal width sections
-        const sliceWidth = WIDTH * 1.0 / bufferLength;
+        const sliceWidth = WIDTH * 1.0 / (bufferLength * 2);
         // x-axis
         let x = 0;
         
