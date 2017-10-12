@@ -2,20 +2,17 @@
     box-sizing: border-box;
     list-style: none;
     text-decoration: none;
-        font-family: 'Death-Star';
-
+    font-family: 'Death-Star';
 }
+
 @font-face {
     font-family: 'Death-Star';
-    src:url('font/Death-Star.ttf.woff') format('woff'),
-        url('font/Death-Star.ttf.svg#Death-Star') format('svg'),
-        url('font/Death-Star.ttf.eot'),
-        url('font/Death-Star.ttf.eot?#iefix') format('embedded-opentype'); 
+    src: url('font/Death-Star.ttf.woff') format('woff'), url('font/Death-Star.ttf.svg#Death-Star') format('svg'), url('font/Death-Star.ttf.eot'), url('font/Death-Star.ttf.eot?#iefix') format('embedded-opentype');
     font-weight: normal;
     font-style: normal;
 }
 
-body{
+body {
     display: flex;
     justify-content: center;
 }
@@ -42,7 +39,6 @@ body{
     border: 1px solid black;
 }
 
-
 div#top-controls {
     display: flex;
     flex-direction: row;
@@ -59,7 +55,7 @@ div#slide-container {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: 125px;
+    align-items: stretch;
     height: 240px;
     border: 1px solid black;
 }
@@ -75,7 +71,7 @@ div#button-container {
     flex-direction: column;
     justify-content: space-around;
     align-items: flex-end;
-    width: 125px;
+    width: 120px;
     border: 1px solid black;
 }
 
@@ -95,27 +91,60 @@ div.switch {
     background: rgba(0, 38, 201, 1.0);
     justify-content: center;
 }
-div#cnv1-container{
+
+div#btn2-container {
+    background: rgba(0, 19, 102, 1.0);
+    transition: 2000ms all ease;
+}
+
+div#btn2-container.on {
+    background: rgba(0, 48, 255, 1.0);
+    transition: 2000ms all ease;
+}
+
+.vader {
+    display: flex;
+    width: 62%;
+    align-self: center;
+    justify-content: center;
+    fill: transparent;
+}
+
+.vader.on {
+    fill: white;
+}
+
+div#btn1-container {
     background: rgba(10, 10, 10, 1.0);
     box-shadow: 0 0 0px 0px rgba(10, 10, 10, 0.01);
     transition: all ease 400ms;
     transition-delay: 200ms;
 }
-div#cnv1-container.on {
+
+div#btn1-container.on {
     background: rgba(236, 2, 55, 1.0);
     box-shadow: 0 0 5px 1px rgba(255, 2, 59, 1.0);
     transition: all ease 400ms;
     transition-delay: 200ms;
 }
-.power{
+
+.power {
     fill: rgba(102, 1, 23, 1.0);
     transition: all ease-in-out 800ms;
     transition-delay: 500ms;
 }
-.power.on{
-    fill: rgba(0,50,50,1);
+
+.power.on {
+    fill: rgba(0, 50, 50, 1);
     transition: all ease-in-out 700ms;
     transition-delay: 100ms;
+}
+
+#vaderbtn {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    /* background: green; */
 }
 
 #pwrbtn {
@@ -125,40 +154,67 @@ div#cnv1-container.on {
     background: transparent;
 }
 
-.effect-knob {
-    display: inline-block;
-    flex-grow: 1;
-}
-
-
 #play-stop-pause-container {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    /* justify-content: center; */
 }
 
-button#playbtn,
-button#stopbtn {
-    background: transparent;
+.buttons {
+    background: rgba(226, 229, 226, 1.0);
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.control-button {
+    /* background: red; */
+    width: 84%;
+}
+
+#stopbtn {
     width: 100%;
-    height: 60px;
+    /* background: blue; */
 }
 
-.icon-play {
-    background: url('assets/play.svg') no-repeat;
-    height: 32px;
+#playbtn {
+    /* width: 45px; */
 }
 
-.icon-stop {
-    background: url('assets/stop.svg') no-repeat;
-    height: 32px;
+.stop {
+    fill: rgba(102, 1, 23, 1.0);
+    transition: all 150ms ease;
 }
 
-#master-gain-container {
+.play {
+    fill: rgba(0, 19, 102, 1.0);
+    transition: all 150ms ease;
 }
 
-#tempo-slider-container {
+.stop:hover {
+    fill: rgba(236, 2, 55, 1.0);
+    transition: all 150ms ease;
 }
+
+.play:hover {
+    fill: rgba(0, 48, 255, 1.0);
+    transition: all 150ms ease;
+}
+
+.play.on {
+    fill: rgba(0, 48, 255, 1.0);
+    transition: all 150ms ease;
+}
+
+#play-stop-button-divider {
+    width: 100%;
+}
+
+#master-gain-container {}
+
+#tempo-slider-container {}
 
 #eq-container {
     display: flex;
@@ -170,9 +226,9 @@ button#stopbtn {
     display: flex;
     flex-direction: row;
     justify-content: center;
-
     margin: 1px auto 1px;
 }
+
 .eq-label {
     display: flex;
     align-items: center;
@@ -185,10 +241,22 @@ input {
     display: none;
 }
 
-input#audioFile {
-    display: initial;
+#effect1-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+input#audioFile {
+    display: flex;
+    background: transparent;
+    color: transparent;
+    width: 120px;
+}
+
+
 /* VOLUME LED STYLES  */
+
 .powerLED {
     display: flex;
     flex-direction: column-reverse;
@@ -219,4 +287,3 @@ input#audioFile {
     transition: all 500ms ease-out;
     box-shadow: 0 0 0 0 black;
 }
-

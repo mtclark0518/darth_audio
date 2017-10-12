@@ -5,8 +5,11 @@
 //-----------------------------------------------------------------------------------------------------------------
 
 var playButton = $('#playbtn');
-var powerButton = $('#cnv1-container');
+var powerButton = $('#btn1-container');
+var blueButton = $('#btn2-container');
+var vaderSVG = $('.vader');
 var powerSVG = $('.power');
+var playSVG = $('.play');
 var input = $('#audioFile');
 var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
@@ -81,6 +84,8 @@ function initPlayEvent(){
     var fileInput = input[0];
         //make sure we have the correct file
         if (fileInput.files.length > 0 && ["audio/mpeg", "audio/mp3"].includes(fileInput.files[0].type)) {
+            $(playSVG).toggleClass('on');
+            $(vaderSVG).toggleClass('on');
             // object that has downloaded an MP3 file from the internet, or any other ArrayBuffer containing MP3 data. 
             createArrayBuffer(fileInput.files[0], function (mp3ArrayBuffer) {
                 // Pass the ArrayBuffer to the decode method
@@ -144,6 +149,9 @@ function stopPlayback(){
     source.disconnect(sourceGain);
     console.log('disconnected');
     source = null;
+    $(playSVG).removeClass('on');
+    $(vaderSVG).removeClass('on');
+
   }
 }
 
@@ -292,11 +300,11 @@ function visualize() {
         canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
         // visual width + color 
         canvasContext.lineWidth = 2;
-        canvasContext.strokeStyle = 'rgb(255,0,0)';
+        canvasContext.strokeStyle = 'rgba(236, 2, 55, 1.0)';
         // starts to draw our wave
         canvasContext.beginPath();
         // chops canvas into equal width sections
-        const sliceWidth = WIDTH * 1.0 / (bufferLength * 2);
+        const sliceWidth = WIDTH * 1.0 / analyserNode.fftSize;
         // x-axis
         let x = 0;
         
@@ -377,6 +385,7 @@ $(document).ready(function(){
     $(powerButton).click(function(event) {
         $(this).toggleClass('on');
         $(powerSVG).toggleClass('on');
+        $(blueButton).toggleClass('on');
         if(powerIsOn()){
             let myLEDs = $('.powerLED');
             let myOtherLEDs = myLEDs[1].children;            
@@ -387,6 +396,8 @@ $(document).ready(function(){
         } else if(!powerIsOn()){
             let myLEDs = $('.powerLED');
             myLEDs.removeClass('active');
+            $(blueButton).removeClass('on');
+
         }
     })
 
