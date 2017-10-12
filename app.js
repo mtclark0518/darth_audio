@@ -1,59 +1,85 @@
-var playButton = $('#playbtn');
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// GLOBAL VARIABLE DEFINITIONS-------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
 
+var playButton = $('#playbtn');
 var powerButton = $('#cnv1-container');
 var powerSVG = $('.power');
 var input = $('#audioFile');
 var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
-var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
 var source = null; // This is the BufferSource containing the buffered audio
 var powerLED;
 
 
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// WEB AUDIO COMPONENT SETUP---------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
 
+// Web Audio Api Instance
+var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
 
-// the 'outgoing' signal
+// Volume Controls
 var masterGain = audioContext.createGain();
-//compressing sound for quality
-var compressorNode = audioContext.createDynamicsCompressor();
-//analyzes audio context
-var analyserNode = audioContext.createAnalyser();
 var sourceGain = audioContext.createGain();
 var mainGain = audioContext.createGain();
 
+//compressing sound for quality (not doing anything currently but set up to)
+var compressorNode = audioContext.createDynamicsCompressor();
 
-// creating the equalizer filters
+//analyzes audio context for visuals
+var analyserNode = audioContext.createAnalyser();
+
+// Equalizier component - 4 biquadFilters creating a 3-band eq with a low pass filter sweep
+// this is my bassline...my bassline...move move your wasteline...to my bassline
+// low shelf amps <= frequency value....high shelf does the opposite
 var low = audioContext.createBiquadFilter();
 low.type = "lowshelf";
 low.frequency.value = 500.0;
 low.gain.value = 0.0;
 
+// mids use peaking filter to amp frequency value
+// q value is like a spread cooef
 var mid = audioContext.createBiquadFilter();
 mid.type = "peaking";
 mid.frequency.value = 1000.0;
 mid.Q.value = 0.61;
 mid.gain.value = 0.0;
 
+// da hizziees
 var high = audioContext.createBiquadFilter();
 high.type = "highshelf";
 high.frequency.value = 2000.0;
 high.gain.value = 0.0;
 
+// cut off frequency controlled via dom
 var filter = audioContext.createBiquadFilter();
 filter.type = "lowpass";
 filter.Q.value = 0.71;    
 
 
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// PLAYBACK FUNCTIONS----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+//utility function 
 function powerIsOn(){
     console.log('fugittaboutit')
     var pwr = $(powerButton).hasClass('on') ? true : false;
-    console.log(pwr)
     return pwr;
 }
 
+// larger funciton holding the event functions following  a request to play a file
+// checks input is of type mp3(chrome)/'mpeg'(firefox)
 function initPlayEvent(){
     var fileInput = input[0];
-        console.log(fileInput[0]); 
+        //make sure we have the correct file
         if (fileInput.files.length > 0 && ["audio/mpeg", "audio/mp3"].includes(fileInput.files[0].type)) {
             // object that has downloaded an MP3 file from the internet, or any other ArrayBuffer containing MP3 data. 
             createArrayBuffer(fileInput.files[0], function (mp3ArrayBuffer) {
@@ -77,14 +103,13 @@ function createArrayBuffer(selectedFile, callback) {
     reader.readAsArrayBuffer(selectedFile);
 }
 
+//process the buffer and prep for playback
 function decodeArrayBuffer(mp3ArrayBuffer) {
     audioContext.decodeAudioData(mp3ArrayBuffer, function (decodedAudioData) {
-              
-        // Clear any existing audio source that we might be using
-        if (source !== null) {
-            source.disconnect(sourceGain);
-            source = null; 
-        } 
+        // Clear any existing audio source that we might be using        
+        stopPlayback();
+
+        // create our audio source 
         source = audioContext.createBufferSource();
         source.buffer = decodedAudioData;
         
@@ -94,8 +119,21 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
 
 // web audio component connections to make an audio grid
 function connectMixer(){
+    // handler for visualiztion events
     triggerVisuals();
-    source.connect(sourceGain).connect(filter).connect(low).connect(mid).connect(high).connect(mainGain).connect(compressorNode).connect(masterGain).connect(analyserNode).connect(audioContext.destination);
+    // audio grid begins with audio source
+    source.connect(sourceGain)
+    // filter sweep first 
+    .connect(filter)
+    // passes directrly through eq components
+    .connect(low).connect(mid).connect(high)
+    // send gain - how much sound we let out of our eq
+    // currently set a full and inaccessible via dom
+    .connect(mainGain)
+    // compressor to handle future implementations of component nodes
+    .connect(compressorNode)
+    // output volume - analyzer for visuals - destination = speakers
+    .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
     // tell the audio buffer to play from the beginning
     source.start(0);
     
@@ -111,9 +149,18 @@ function stopPlayback(){
 
 function toggleMute(){
 
-  // masterGain.gain.value = 0;
-  console.log('toggleMute bitch');
+    // masterGain.gain.value = 0;
+    console.log('toggleMute bitch');
 }
+
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// UI COMPONENT CONSTRUCTORS----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+// constructor functions for ui round sliders (knobs) using jquery module
 function createRoundSlider(name, type, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle){
     $(name).roundSlider({
         sliderType: sliderType,
@@ -132,6 +179,7 @@ function createRoundSlider(name, type, input, sliderType, radius, width, min, ma
         }
     });
 }
+// creates the filter knob - can be refactored into above function
 function createFilterSweep(name, type, input, sliderType, radius, width, min, max, initValue, stAngle, endAngle, step){
     $(name).roundSlider({
         sliderType: sliderType,
@@ -150,6 +198,8 @@ function createFilterSweep(name, type, input, sliderType, radius, width, min, ma
         }
     });
 }
+
+// creates tempo and master volume sliders (different from above round sliders) 
 function createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step ){
     $(elemID).slider({
         orientation : orientation,
@@ -171,67 +221,7 @@ function createEffectControl(controlName, elemID, inputValueID, orientation, ran
     });
 }
 
-
-//-------------------------------------------
-//-------------------------------------------
-//CANVAS VISUALIZERS
-//-------------------------------------------
-//-------------------------------------------
-var canvas = $('#visualizer')[0];
-console.log(canvas);
-var canvasContext = canvas.getContext("2d");
-
-//create our mixer
-function visualize() {
-    WIDTH = canvas.width;
-    HEIGHT = canvas.height;
-    console.log('height = ' +  HEIGHT);
-    console.log('width = ' +  WIDTH);
-    canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
-
-    analyserNode.fftSize =128;
-    var bufferLength = analyserNode.frequencyBinCount;
-    console.log(analyserNode.fftSize);
-    console.log(bufferLength);
-    var dataArray = new Uint8Array(bufferLength);
-    console.log(dataArray);
-    
-
-    function draw() {
-        drawVisual = requestAnimationFrame(draw);
-        analyserNode.getByteTimeDomainData(dataArray);
-        // analyserNode.getByteFrequencyData(dataArray);
-        // console.log(analyserNode.getByteFrequencyData(dataArray));
-        canvasContext.fillStyle = 'rgb(0, 0, 0)';
-        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
-        canvasContext.lineWidth = 2;
-        canvasContext.strokeStyle = 'rgb(255,0,0)';
-        canvasContext.beginPath();
-        const sliceWidth = WIDTH * 1.0 / bufferLength;
-        let x = 0;
-        
-        for (let i = 0; i < bufferLength; i++) {
-            let v = dataArray[i] /128.0;
-            let y = v * HEIGHT / 2;
-
-            if (i === 0) {
-                canvasContext.moveTo(x, y);
-            } else {
-                canvasContext.lineTo(x, y);
-            }
-            x += sliceWidth;
-        }
-
-        canvasContext.lineTo(canvas.width, canvas.height/2);
-        canvasContext.stroke();
-    }
-    draw();
-}
-
-function triggerVisuals(){
-    visualize();
-}
-
+// creates ui master volume 'lights'
 function $createLEDContainer(){
     powerLED = $('<div>').addClass('powerLED mixer-item');
     for(let i = 0; i < 10; i++){
@@ -259,6 +249,92 @@ function isLEDActive(LEDs) {
     } 
 }
 
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//CANVAS VISUALIZERS-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
+// canvas variable definitions
+var canvas = $('#visualizer')[0];
+console.log(canvas);
+var canvasContext = canvas.getContext("2d");
+
+
+// visualize function adapted from web-audio-api voice-change-o-matic
+function visualize() {
+    // define the canvas where animation occurs
+    WIDTH = canvas.width;
+    HEIGHT = canvas.height;
+    // empty the canvas
+    canvasContext.clearRect(0, 0, WIDTH, HEIGHT);
+
+    // get our data to plot from analyzer node
+    // provides us with real time frequency and time-domain analysis information
+    // fft fast fourier transform.... determine freq domain
+    analyserNode.fftSize =128;
+
+    // half the fftSize - represents the datavalues we plot
+    var bufferLength = analyserNode.frequencyBinCount;
+    // array of 8-bit ints - length set to our buffer length
+    var dataArray = new Uint8Array(bufferLength);
+
+    // animation function
+    function draw() {
+        // calls the draw function - this function - recurrsively
+        drawVisual = requestAnimationFrame(draw);
+        // passes the current waveform into our  Uint8Array - so we have the current waveform represented as 64 binary numbers
+        analyserNode.getByteTimeDomainData(dataArray);
+        
+        // paints the background of the canvas black
+        canvasContext.fillStyle = 'rgb(0, 0, 0)';
+        canvasContext.fillRect(0, 0, WIDTH, HEIGHT);
+        // visual width + color 
+        canvasContext.lineWidth = 2;
+        canvasContext.strokeStyle = 'rgb(255,0,0)';
+        // starts to draw our wave
+        canvasContext.beginPath();
+        // chops canvas into equal width sections
+        const sliceWidth = WIDTH * 1.0 / bufferLength;
+        // x-axis
+        let x = 0;
+        
+        for (let i = 0; i < bufferLength; i++) {
+            // each data point of our waveform divided by the fftSize
+            let v = dataArray[i] /bufferLength * 2;
+            // y-axis point
+            let y = v * HEIGHT / 2;
+
+            if (i === 0) {
+                // if its the first data point we move to begin drawing
+                canvasContext.moveTo(x, y);
+            } else {
+                // we draw our line to the next point
+                canvasContext.lineTo(x, y);
+            }
+            // where we are along the x-axis
+            x += sliceWidth;
+        }
+        
+        canvasContext.lineTo(canvas.width, canvas.height/2);
+        canvasContext.stroke();
+    }
+    draw();
+}
+
+// can handle multiple visualizations
+function triggerVisuals(){
+    visualize();
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// DOCUMENT READY--------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+
 $(document).ready(function(){
 
     $createLEDContainer();
@@ -266,7 +342,6 @@ $(document).ready(function(){
  
     $createLEDContainer();
     $(powerLED).prependTo(".mixer");
-
 
     //createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step )
     createEffectControl(masterGain, '#master-gain', '#amount', 'vertical', 'min', 0, 1, 1, 0.1);
@@ -281,7 +356,7 @@ $(document).ready(function(){
     createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 24, 12, 10, 20050, 20050, 315, 90, 500);
 
     // create tempo slide from the source playbackRate
-
+    // refactor this into  effect control
     $("#tempo-slider" ).slider({
         orientation: "vertical",
         range: "min",
@@ -297,6 +372,8 @@ $(document).ready(function(){
     });
     $( "#tempo-input" ).val( $( "#tempo-slider" ).slider( "value" ) );
 
+    // event listener for clicking on power button
+    // triggers ui transitions 
     $(powerButton).click(function(event) {
         $(this).toggleClass('on');
         $(powerSVG).toggleClass('on');
@@ -312,7 +389,6 @@ $(document).ready(function(){
             myLEDs.removeClass('active');
         }
     })
-
 
     // Assign event handler for when the 'Play' button is clicked
     $(playButton).click(function(event) {
@@ -334,5 +410,4 @@ $(document).ready(function(){
     $(stopButton).click(function(event) {
         stopPlayback();
     });
-
 });
