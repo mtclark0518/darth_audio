@@ -1,0 +1,23 @@
+{
+    "name": "darth_audio",
+    "version": "1.0.0",
+    "description": "web audio api practice",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mtclark0518/darth_audio.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mtclark0518/darth_audio/issues"
+    },
+    "homepage": "https://github.com/mtclark0518/darth_audio#readme",
+    "dependencies": {
+        "express": "^4.16.2"
+    }
+}
