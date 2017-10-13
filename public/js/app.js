@@ -15,7 +15,6 @@ var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
 var source = null; // This is the BufferSource containing the buffered audio
 var powerLED;
-var gta = document.querySelector('audio');
 
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -26,7 +25,6 @@ var gta = document.querySelector('audio');
 
 // Web Audio Api Instance
 var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
-// var source = audioContext.createMediaElementSource(gta);
 // Volume Controls
 var masterGain = audioContext.createGain();
 var sourceGain = audioContext.createGain();
@@ -79,46 +77,32 @@ function powerIsOn(){
     var pwr = $(powerButton).hasClass('on') ? true : false;
     return pwr;
 }
-function playTrack(){
-    console.log('play track')
-    console.log(source);
-    // source = track;
-    console.log(gta);
-    // connectMixer();
-    gta.play();
-    // source.mediaElement.play();
-    triggerVisuals();
-    
+function loadTrack(){
+    request = new XMLHttpRequest();
+    request.open('GET', '../assets/audio/gta.mp3', true);
+    request.responseType = 'arraybuffer';
+    request.onload = function() {
+        let mp3ArrayBuffer = request.response;
+        decodeArrayBuffer(mp3ArrayBuffer);
+    };
+    request.send();
 }
-// larger funciton holding the event functions following  a request to play a file
-// checks input is of type mp3(chrome)/'mpeg'(firefox)
-function initPlayEvent(){
-    var fileInput = input[0];
-        //make sure we have the correct file
-        if (fileInput.files.length > 0 && ["audio/mpeg", "audio/mp3"].includes(fileInput.files[0].type)) {
-            $(playSVG).toggleClass('on');
-            $(vaderSVG).toggleClass('on');
-            console.log(fileInput.files[0]);
-            // object that has downloaded an MP3 file from the internet, or any other ArrayBuffer containing MP3 data. 
-            createArrayBuffer(fileInput.files[0], function (mp3ArrayBuffer) {
-                // Pass the ArrayBuffer to the decode method
-                decodeArrayBuffer(mp3ArrayBuffer);              
-            });  
-        } else {
-            alert("Error! No attached file or attached file was of the wrong type!");
-        }
+function playTrack(){
+    source.start(0);    
+    $(playSVG).toggleClass('on');
+    $(vaderSVG).toggleClass('on');
+    triggerVisuals();    
 }
 
-// Used the File API in order to asynchronously obtain the bytes of the file that the user selected in the 
-// file input box. The bytes are returned using a callback method that passes the resulting ArrayBuffer. 
-function createArrayBuffer(selectedFile, callback) {
-    var reader = new FileReader(); 
-    reader.onload = function (event) {
-        // The FileReader returns us the bytes from the computer's file system as an ArrayBuffer  
-        var mp3ArrayBuffer = reader.result; 
-        callback(mp3ArrayBuffer); 
-    };
-    reader.readAsArrayBuffer(selectedFile);
+function stopPlayback(){
+  if (source !== null) {
+    source.disconnect(sourceGain);
+    console.log('disconnected');
+    source = null;
+    $(playSVG).removeClass('on');
+    $(vaderSVG).removeClass('on');
+
+  }
 }
 
 //process the buffer and prep for playback
@@ -126,18 +110,15 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
     audioContext.decodeAudioData(mp3ArrayBuffer, function (decodedAudioData) {
         // Clear any existing audio source that we might be using        
         stopPlayback();
-
         // create our audio source 
         source = audioContext.createBufferSource();
         source.buffer = decodedAudioData;
-        
         connectMixer();
     }); 
 }
 
 // web audio component connections to make an audio grid
 function connectMixer(){
-    triggerVisuals();
     // handler for visualiztion events
     console.log('inside conncection');
     console.log('your track is: ')
@@ -155,28 +136,6 @@ function connectMixer(){
     .connect(compressorNode)
     // output volume - analyzer for visuals - destination = speakers
     .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
-    // tell the audio buffer to play from the beginning
-    source.start(0);
-    // source.mediaElement.play();
-
-    
-}
-
-function stopPlayback(){
-  if (source !== null) {
-    source.disconnect(sourceGain);
-    console.log('disconnected');
-    source = null;
-    $(playSVG).removeClass('on');
-    $(vaderSVG).removeClass('on');
-
-  }
-}
-
-function toggleMute(){
-
-    // masterGain.gain.value = 0;
-    console.log('toggleMute bitch');
 }
 
 
@@ -362,7 +321,6 @@ function triggerVisuals(){
 //-----------------------------------------------------------------------------------------------------------------
 
 $(document).ready(function(){
-
     $createLEDContainer();
     $(powerLED).appendTo(".mixer");
  
@@ -402,41 +360,36 @@ $(document).ready(function(){
     // triggers ui transitions 
     $(powerButton).click(function(event) {
         $(this).toggleClass('on');
+        let myLEDs = $('.LED');
+        $(myLEDs).toggleClass('on');
         $(powerSVG).toggleClass('on');
         $(blueButton).toggleClass('on');
+        
         if(powerIsOn()){
-            let myLEDs = $('.powerLED');
+            stopPlayback();
+            loadTrack();
+            myLEDs = $('.powerLED');
             let myOtherLEDs = myLEDs[1].children;            
             myLEDs = myLEDs[0].children;
             isLEDActive(myLEDs);
             isLEDActive(myOtherLEDs);
-            // connectMixer();
             console.log('mixer connected');
         } else if(!powerIsOn()){
-            let myLEDs = $('.powerLED');
-            myLEDs.removeClass('active');
+            myLEDs.removeClass('on');
             $(blueButton).removeClass('on');
             $(vaderSVG).removeClass('on');
-
         }
-    })
+    });
 
     // Assign event handler for when the 'Play' button is clicked
     $(playButton).click(function(event) {
         event.stopPropagation();
         if(powerIsOn()){
-            // playTrack();
-            initPlayEvent();
+            playTrack();
         } else {
             alert('turn the power on dumb dumb')
         }
     });
-
-    // mute function to store value and set new value;
-    $(muteButton).click(function(event) {
-        // event.preventDefault();
-        // toggleMute();
-     });
 
     //event handler for when the "stop button is pushed"
     $(stopButton).click(function(event) {

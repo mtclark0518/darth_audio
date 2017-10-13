@@ -447,9 +447,15 @@ input#audioFile {
 
 .LED {
     margin: auto;
+    background: rgba(0, 50, 50, 1);
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    transition: all 500ms ease;
+    box-shadow: 0 0 0 0 black;
 }
 
-.active {
+.active.on {
     background: rgba(160, 251, 253, 1.0);
     width: 10px;
     height: 10px;
