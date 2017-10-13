@@ -76,11 +76,11 @@
         fill: rgb(50, 50, 50);
     }
     20% {
-        fill: whitesmoke;
+        fill: rgb(225, 229, 225);
         fill-opacity: 0.01;
     }
     21% {
-        fill: whitesmoke;
+        fill: rgb(225, 229, 225);
         fill-opacity: 1;
     }
     29% {
@@ -160,6 +160,10 @@ body {
     border: 1px solid black;
 }
 
+.text {
+    color: rgb(10, 10, 20);
+}
+
 div#top-controls {
     display: flex;
     flex-direction: row;
@@ -196,15 +200,6 @@ div#button-container {
     border: 1px solid black;
 }
 
-div.switch {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 70px;
-    height: 170px;
-    background: rgba(88, 89, 88, 1.0);
-}
-
 .cnv {
     width: 100%;
     display: flex;
@@ -237,7 +232,7 @@ div#btn2-container.on {
 }
 
 div#btn1-container {
-    background: rgba(10, 10, 10, 1.0);
+    background: rgba(80, 80, 80, 1.0);
     box-shadow: 0 0 0px 0px rgba(10, 10, 10, 0.01);
     transition: all ease 400ms;
     transition-delay: 200ms;
@@ -257,7 +252,7 @@ div#btn1-container.on {
 }
 
 .power.on {
-    fill: rgba(0, 50, 50, 1);
+    fill: rgba(30, 30, 30, 1);
     transition: all ease-in-out 700ms;
     transition-delay: 100ms;
 }
@@ -273,6 +268,13 @@ div#btn1-container.on {
     width: 50%;
     align-self: center;
     background: transparent;
+}
+
+div.switch {
+    display: flex;
+    width: 70px;
+    height: 170px;
+    background: rgba(88, 89, 88, 1.0);
 }
 
 #play-stop-pause-container {
@@ -296,8 +298,6 @@ div#btn1-container.on {
 #stopbtn {
     width: 100%;
 }
-
-#playbtn {}
 
 .stop {
     fill: rgba(102, 1, 23, 1.0);
@@ -328,9 +328,40 @@ div#btn1-container.on {
     width: 100%;
 }
 
-#master-gain-container {}
+#master-gain-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
 
-#tempo-slider-container {}
+div.ui-state-default,
+.ui-widget-content .ui-state-default {
+    background: rgba(225, 229, 225, 1.0);
+    width: 50px;
+    border: none;
+}
+
+.ui-widget-header,
+.ui-widget-content {
+    background: black;
+}
+
+.ui-widget.ui-widget-content {
+    border: 1px solid rgb(40, 40, 40);
+}
+
+.ui-slider-vertical .ui-slider-handle {
+    left: -1.2em;
+    margin-bottom: -0.635em;
+}
+
+#tempo-slider-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
 
 #eq-container {
     display: flex;
@@ -348,7 +379,7 @@ div#btn1-container.on {
 .eq-label {
     display: flex;
     align-items: center;
-    color: white;
+    color: rgba(10, 10, 25, 1.0);
     width: 18px;
     font-family: 'Death-Star';
 }
@@ -375,6 +406,33 @@ input#audioFile {
     width: 120px;
 }
 
+#effect2-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.rs-bg-color {
+    background-color: rgba(40, 40, 40, 1);
+}
+
+.rs-handle {
+    background-color: rgba(40, 40, 40, 1);
+}
+
+.rs-range-color {
+    background-color: rgb(236, 50, 75);
+}
+
+.rs-border {
+    border: 1px solid transparent;
+}
+
+.input-value {
+    display: none;
+}
+
 
 /* VOLUME LED STYLES  */
 
@@ -392,7 +450,7 @@ input#audioFile {
 }
 
 .active {
-    background: rgba(200, 251, 253, 1.0);
+    background: rgba(160, 251, 253, 1.0);
     width: 10px;
     height: 10px;
     border-radius: 100%;

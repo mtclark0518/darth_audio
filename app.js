@@ -13,8 +13,9 @@ var playSVG = $('.play');
 var input = $('#audioFile');
 var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
-var source = null; // This is the BufferSource containing the buffered audio
+// var source; // This is the BufferSource containing the buffered audio
 var powerLED;
+var gta = document.querySelector('audio');
 
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ var powerLED;
 
 // Web Audio Api Instance
 var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
-
+var source = audioContext.createMediaElementSource(gta);
 // Volume Controls
 var masterGain = audioContext.createGain();
 var sourceGain = audioContext.createGain();
@@ -78,7 +79,17 @@ function powerIsOn(){
     var pwr = $(powerButton).hasClass('on') ? true : false;
     return pwr;
 }
-
+function playTrack(){
+    console.log('play track')
+    console.log(source);
+    // source = track;
+    console.log(gta);
+    // connectMixer();
+    gta.play();
+    // source.mediaElement.play();
+    triggerVisuals();
+    
+}
 // larger funciton holding the event functions following  a request to play a file
 // checks input is of type mp3(chrome)/'mpeg'(firefox)
 function initPlayEvent(){
@@ -87,6 +98,7 @@ function initPlayEvent(){
         if (fileInput.files.length > 0 && ["audio/mpeg", "audio/mp3"].includes(fileInput.files[0].type)) {
             $(playSVG).toggleClass('on');
             $(vaderSVG).toggleClass('on');
+            console.log(fileInput.files[0]);
             // object that has downloaded an MP3 file from the internet, or any other ArrayBuffer containing MP3 data. 
             createArrayBuffer(fileInput.files[0], function (mp3ArrayBuffer) {
                 // Pass the ArrayBuffer to the decode method
@@ -126,7 +138,9 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
 // web audio component connections to make an audio grid
 function connectMixer(){
     // handler for visualiztion events
-    triggerVisuals();
+    console.log('inside conncection');
+    console.log('your track is: ')
+    console.log(source);
     // audio grid begins with audio source
     source.connect(sourceGain)
     // filter sweep first 
@@ -141,7 +155,9 @@ function connectMixer(){
     // output volume - analyzer for visuals - destination = speakers
     .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
     // tell the audio buffer to play from the beginning
-    source.start(0);
+    // source.start(0);
+    // source.mediaElement.play();
+
     
 }
 
@@ -149,7 +165,7 @@ function stopPlayback(){
   if (source !== null) {
     source.disconnect(sourceGain);
     console.log('disconnected');
-    source = null;
+    // source = null;
     $(playSVG).removeClass('on');
     $(vaderSVG).removeClass('on');
 
@@ -189,7 +205,7 @@ function createRoundSlider(name, type, input, sliderType, radius, width, min, ma
     });
 }
 // creates the filter knob - can be refactored into above function
-function createFilterSweep(name, type, input, sliderType, radius, width, min, max, initValue, stAngle, endAngle, step){
+function createFilterSweep(name, type, input, sliderType, radius, width, min, max, stAngle, endAngle, step){
     $(name).roundSlider({
         sliderType: sliderType,
         radius: radius,
@@ -197,7 +213,7 @@ function createFilterSweep(name, type, input, sliderType, radius, width, min, ma
         min: min,
         max: max,
         step: step,
-        value: initValue,
+        value: 20050.0,
         startAngle: stAngle,
         endAngle: endAngle,
         mouseScrollAction: true,
@@ -362,7 +378,7 @@ $(document).ready(function(){
     createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 16, 7, -12, 12, 0, 0.2, 315, 225);
     createRoundSlider('#high-slider', high, '#high-input', 'min-range', 16, 8, -12, 12, 0, 0.2, 315, 225);
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle, step)
-    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 24, 12, 10, 20050, 20050, 315, 90, 500);
+    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 24, 12, 10, 20050, 315, 90, 650);
 
     // create tempo slide from the source playbackRate
     // refactor this into  effect control
@@ -393,11 +409,13 @@ $(document).ready(function(){
             myLEDs = myLEDs[0].children;
             isLEDActive(myLEDs);
             isLEDActive(myOtherLEDs);
-
+            connectMixer();
+            console.log('mixer connected');
         } else if(!powerIsOn()){
             let myLEDs = $('.powerLED');
             myLEDs.removeClass('active');
             $(blueButton).removeClass('on');
+            $(vaderSVG).removeClass('on');
 
         }
     })
@@ -406,7 +424,8 @@ $(document).ready(function(){
     $(playButton).click(function(event) {
         event.stopPropagation();
         if(powerIsOn()){
-            initPlayEvent();
+            playTrack();
+            // initPlayEvent();
         } else {
             alert('turn the power on dumb dumb')
         }
