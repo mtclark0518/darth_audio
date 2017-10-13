@@ -13,7 +13,7 @@ var playSVG = $('.play');
 var input = $('#audioFile');
 var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
-// var source; // This is the BufferSource containing the buffered audio
+var source = null; // This is the BufferSource containing the buffered audio
 var powerLED;
 var gta = document.querySelector('audio');
 
@@ -26,7 +26,7 @@ var gta = document.querySelector('audio');
 
 // Web Audio Api Instance
 var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
-var source = audioContext.createMediaElementSource(gta);
+// var source = audioContext.createMediaElementSource(gta);
 // Volume Controls
 var masterGain = audioContext.createGain();
 var sourceGain = audioContext.createGain();
@@ -73,7 +73,7 @@ filter.Q.value = 0.71;
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 
-//utility function 
+//utility function to check state
 function powerIsOn(){
     console.log('fugittaboutit')
     var pwr = $(powerButton).hasClass('on') ? true : false;
@@ -137,6 +137,7 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
 
 // web audio component connections to make an audio grid
 function connectMixer(){
+    triggerVisuals();
     // handler for visualiztion events
     console.log('inside conncection');
     console.log('your track is: ')
@@ -155,7 +156,7 @@ function connectMixer(){
     // output volume - analyzer for visuals - destination = speakers
     .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
     // tell the audio buffer to play from the beginning
-    // source.start(0);
+    source.start(0);
     // source.mediaElement.play();
 
     
@@ -165,7 +166,7 @@ function stopPlayback(){
   if (source !== null) {
     source.disconnect(sourceGain);
     console.log('disconnected');
-    // source = null;
+    source = null;
     $(playSVG).removeClass('on');
     $(vaderSVG).removeClass('on');
 
@@ -409,7 +410,7 @@ $(document).ready(function(){
             myLEDs = myLEDs[0].children;
             isLEDActive(myLEDs);
             isLEDActive(myOtherLEDs);
-            connectMixer();
+            // connectMixer();
             console.log('mixer connected');
         } else if(!powerIsOn()){
             let myLEDs = $('.powerLED');
@@ -424,8 +425,8 @@ $(document).ready(function(){
     $(playButton).click(function(event) {
         event.stopPropagation();
         if(powerIsOn()){
-            playTrack();
-            // initPlayEvent();
+            // playTrack();
+            initPlayEvent();
         } else {
             alert('turn the power on dumb dumb')
         }
