@@ -14,7 +14,8 @@
 
 @keyframes vaderIn {
     0% {
-        fill-opacity: 0.01;
+        fill: white;
+        fill-opacity: .01;
     }
     64% {
         fill: black;
@@ -228,7 +229,7 @@ div#btn2-container.on {
 }
 
 .vader.on {
-    animation: vaderIn 15000ms 15000ms 1, vader 7500ms 30000ms infinite;
+    animation: vaderIn 15000ms 14000ms 1, vader 7500ms 29000ms infinite;
 }
 
 div#btn1-container {
