@@ -16,7 +16,6 @@ var stopButton = $('#stopbtn');
 var source = null;
 var powerLED;
 
-
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 // WEB AUDIO COMPONENT SETUP---------------------------------------------------------------------------------------
@@ -55,7 +54,6 @@ const mid = audioContext.createBiquadFilter();
     mid.Q.value = 0.61;
     mid.gain.value = 0.0;
 
-
 // da hizziees
 const high = audioContext.createBiquadFilter();
     high.type = 'highshelf';
@@ -74,6 +72,7 @@ function powerIsOn(){
     var pwr = $(powerButton).hasClass('on') ? true : false;
     return pwr;
 }
+//requests the audio track for the application
 function loadTrack(){
     console.log('inside loadtrack');
     request = new XMLHttpRequest();
@@ -97,7 +96,7 @@ function decodeArrayBuffer(mp3ArrayBuffer) {
         connectMixer();
     }); 
 }
-
+// creates audio grid
 function connectMixer() {
     source.connect(sourceGain);
     sourceGain.connect(filter);
@@ -111,36 +110,16 @@ function connectMixer() {
     analyserNode.connect(audioContext.destination);    
     console.log('mixer connected')
 }
-// function connectMixer(){
-//     // handler for visualiztion events
-//     console.log('inside conncection');
-//     console.log('your track is: ')
-//     console.log(source);
-//     // audio grid begins with audio source
-//     source.connect(sourceGain)
-//     // filter sweep first 
-//     .connect(filter)
-//     // passes directrly through eq components
-//     .connect(low).connect(mid).connect(high)
-//     // send gain - how much sound we let out of our eq
-//     // currently set a full and inaccessible via dom
-//     .connect(mainGain)
-//     // compressor to handle future implementations of component nodes
-//     .connect(compressorNode)
-//     // output volume - analyzer for visuals - destination = speakers
-//     .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
-// }
-
+// starts audio source
 function playTrack(){
     console.log(source);
     console.log('playing');
     source.start(0);        
     $(playSVG).toggleClass('on');
     $(vaderSVG).toggleClass('on');
-    triggerVisuals(); 
-    
+    visualize(); 
 }
-
+// stops audio source
 function stopPlayback(){
   if (source !== null) {
     source.stop(0);
@@ -148,6 +127,7 @@ function stopPlayback(){
     $(vaderSVG).removeClass('on');
     }
 }
+// empties audio source and disconnects from mixer
 function clearSource(){
     if (source !== null) {
         source.disconnect(sourceGain);
@@ -157,7 +137,6 @@ function clearSource(){
         $(vaderSVG).removeClass('on');
     }
 }
-
 
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
@@ -184,6 +163,7 @@ function createRoundSlider(name, type, input, sliderType, radius, width, min, ma
         }
     });
 }
+
 // creates the filter knob - can be refactored into above function
 function createFilterSweep(name, type, input, sliderType, radius, width, min, max, stAngle, endAngle, step){
     $(name).roundSlider({
@@ -238,7 +218,6 @@ function $createLEDContainer(){
     }
 }
 
-//sets class active class on each led based on master gain value
 function isLEDActive(LEDs) {
     if ( powerIsOn() ) {
         let amount = masterGain.gain.value * 100;
@@ -253,7 +232,6 @@ function isLEDActive(LEDs) {
         });
     } 
 }
-
 
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
@@ -306,11 +284,8 @@ function visualize() {
         let x = 0;
         
         for (let i = 0; i < bufferLength; i++) {
-
             let v = dataArray[i] / 128;
-            // y-axis point
             let y = v * HEIGHT / 2;
-
             if (i === 0) {
                 // if its the first data point we move to begin drawing
                 canvasContext.moveTo(x, y);
@@ -321,18 +296,11 @@ function visualize() {
             // where we are along the x-axis
             x += sliceWidth;
         }
-        
         canvasContext.lineTo(canvas.width, canvas.height/2);
         canvasContext.stroke();
     }
     draw();
 }
-
-// can handle multiple visualizations
-function triggerVisuals(){
-    visualize();
-}
-
 
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
@@ -406,9 +374,7 @@ $(document).ready(function(){
         event.stopPropagation();
         if ( powerIsOn() ) {
             playTrack();
-        } else {
-            alert('turn the power on dumb dumb')
-        }
+        } else { alert ('turn the power on dumb dumb'); }
     });
 
     //event handler for when the "stop button is pushed"
