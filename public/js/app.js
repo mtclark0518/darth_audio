@@ -35,9 +35,9 @@ const sourceGain = audioContext.createGain();
 
 // Equalizier component - 4 biquadFilters creating a 3-band eq with a low pass filter sweep
 // cut off frequency controlled via dom
-const filter = audioContext.createBiquadFilter()
+const filter = audioContext.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 20050.0;
+    filter.frequency.value = 20050;
     filter.Q.value = 0.71;
 
 // this is my bassline...my bassline...move move your wasteline...to my bassline
