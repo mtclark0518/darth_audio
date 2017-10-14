@@ -13,7 +13,7 @@ var playSVG = $('.play');
 var input = $('#audioFile');
 var muteButton = $('#mutebtn');
 var stopButton = $('#stopbtn');
-var source = null; // This is the BufferSource containing the buffered audio
+var source = null;
 var powerLED;
 
 
@@ -24,47 +24,43 @@ var powerLED;
 //-----------------------------------------------------------------------------------------------------------------
 
 // Web Audio Api Instance
-var audioContext = new (window.AudioContext || window.webKitAudioContext)(); // Our audio context
-// Volume Controls
-var masterGain = audioContext.createGain();
-var sourceGain = audioContext.createGain();
-var mainGain = audioContext.createGain();
-
-//compressing sound for quality (not doing anything currently but set up to)
-var compressorNode = audioContext.createDynamicsCompressor();
-
-//analyzes audio context for visuals
-var analyserNode = audioContext.createAnalyser();
+const audioContext = new (window.AudioContext || window.webkitAudioContext)(); // Our audio context
+const analyserNode = audioContext.createAnalyser();
 analyserNode.smoothingTimeConstant = 0.90;
+const compressorNode = audioContext.createDynamicsCompressor();
+// Volume Controls
+const masterGain = audioContext.createGain();
+const mainGain = audioContext.createGain();
+const sourceGain = audioContext.createGain();
 
 // Equalizier component - 4 biquadFilters creating a 3-band eq with a low pass filter sweep
+// cut off frequency controlled via dom
+const filter = audioContext.createBiquadFilter()
+    filter.type = 'lowpass';
+    filter.frequency.value = 20050.0;
+    filter.Q.value = 771;
+
 // this is my bassline...my bassline...move move your wasteline...to my bassline
 // low shelf amps <= frequency value....high shelf does the opposite
-var low = audioContext.createBiquadFilter();
-low.type = "lowshelf";
-low.frequency.value = 500.0;
-low.gain.value = 0.0;
+const low = audioContext.createBiquadFilter();
+    low.type = 'lowshelf';
+    low.frequency.value = 500.0;
+    low.gain.value = 0.0;
 
 // mids use peaking filter to amp frequency value
 // q value is like a spread cooef
-var mid = audioContext.createBiquadFilter();
-mid.type = "peaking";
-mid.frequency.value = 1000.0;
-mid.Q.value = 0.61;
-mid.gain.value = 0.0;
+const mid = audioContext.createBiquadFilter();
+    mid.type ='peaking';
+    mid.frequency.value = 1000.0;
+    mid.Q.value = 0.61;
+    mid.gain.value = 0.0;
+
 
 // da hizziees
-var high = audioContext.createBiquadFilter();
-high.type = "highshelf";
-high.frequency.value = 2000.0;
-high.gain.value = 0.0;
-
-// cut off frequency controlled via dom
-var filter = audioContext.createBiquadFilter();
-filter.type = "lowpass";
-filter.frequency.value = 20050;
-filter.Q.value = 0.71;    
-
+const high = audioContext.createBiquadFilter();
+    high.type = 'highshelf';
+    high.frequency.value = 2000.0 ;
+    high.gain.value = 0.0;
 
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
@@ -79,64 +75,87 @@ function powerIsOn(){
     return pwr;
 }
 function loadTrack(){
+    console.log('inside loadtrack');
     request = new XMLHttpRequest();
     request.open('GET', '../assets/audio/gta.mp3', true);
     request.responseType = 'arraybuffer';
     request.onload = function() {
         let mp3ArrayBuffer = request.response;
-        decodeArrayBuffer(mp3ArrayBuffer);
+        decodeArrayBuffer(mp3ArrayBuffer); 
     };
     request.send();
 }
-function playTrack(){
-    source.start(0);    
-    $(playSVG).toggleClass('on');
-    $(vaderSVG).toggleClass('on');
-    triggerVisuals();    
-}
-
-function stopPlayback(){
-  if (source !== null) {
-    source.disconnect(sourceGain);
-    console.log('disconnected');
-    source = null;
-    $(playSVG).removeClass('on');
-    $(vaderSVG).removeClass('on');
-
-  }
-}
-
 //process the buffer and prep for playback
 function decodeArrayBuffer(mp3ArrayBuffer) {
     audioContext.decodeAudioData(mp3ArrayBuffer, function (decodedAudioData) {
         // Clear any existing audio source that we might be using        
-        stopPlayback();
+        clearSource();
         // create our audio source 
         source = audioContext.createBufferSource();
         source.buffer = decodedAudioData;
+        console.log(source);
         connectMixer();
     }); 
 }
 
-// web audio component connections to make an audio grid
-function connectMixer(){
-    // handler for visualiztion events
-    console.log('inside conncection');
-    console.log('your track is: ')
+function connectMixer() {
+    source.connect(sourceGain);
+    sourceGain.connect(filter);
+    filter.connect(low);
+    low.connect(mid);
+    mid.connect(high);
+    high.connect(mainGain);
+    mainGain.connect(compressorNode);
+    compressorNode.connect(masterGain);
+    masterGain.connect(analyserNode);
+    analyserNode.connect(audioContext.destination);    
+    console.log('mixer connected')
+}
+// function connectMixer(){
+//     // handler for visualiztion events
+//     console.log('inside conncection');
+//     console.log('your track is: ')
+//     console.log(source);
+//     // audio grid begins with audio source
+//     source.connect(sourceGain)
+//     // filter sweep first 
+//     .connect(filter)
+//     // passes directrly through eq components
+//     .connect(low).connect(mid).connect(high)
+//     // send gain - how much sound we let out of our eq
+//     // currently set a full and inaccessible via dom
+//     .connect(mainGain)
+//     // compressor to handle future implementations of component nodes
+//     .connect(compressorNode)
+//     // output volume - analyzer for visuals - destination = speakers
+//     .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
+// }
+
+function playTrack(){
     console.log(source);
-    // audio grid begins with audio source
-    source.connect(sourceGain)
-    // filter sweep first 
-    .connect(filter)
-    // passes directrly through eq components
-    .connect(low).connect(mid).connect(high)
-    // send gain - how much sound we let out of our eq
-    // currently set a full and inaccessible via dom
-    .connect(mainGain)
-    // compressor to handle future implementations of component nodes
-    .connect(compressorNode)
-    // output volume - analyzer for visuals - destination = speakers
-    .connect(masterGain).connect(analyserNode).connect(audioContext.destination);
+    console.log('playing');
+    source.start(0);        
+    $(playSVG).toggleClass('on');
+    $(vaderSVG).toggleClass('on');
+    triggerVisuals(); 
+    
+}
+
+function stopPlayback(){
+  if (source !== null) {
+    source.stop(0);
+    $(playSVG).removeClass('on');
+    $(vaderSVG).removeClass('on');
+    }
+}
+function clearSource(){
+    if (source !== null) {
+        source.disconnect(sourceGain);
+        console.log('disconnected');
+        source = null;
+        $(playSVG).removeClass('on');
+        $(vaderSVG).removeClass('on');
+    }
 }
 
 
@@ -221,7 +240,7 @@ function $createLEDContainer(){
 
 //sets class active class on each led based on master gain value
 function isLEDActive(LEDs) {
-    if(powerIsOn()){
+    if ( powerIsOn() ) {
         let amount = masterGain.gain.value * 100;
         $(LEDs).each(function() {
             let min = $(this).data().min;
@@ -367,16 +386,15 @@ $(document).ready(function(){
         $(blueButton).toggleClass('on');
         
         if(powerIsOn()){
-            stopPlayback();
             loadTrack();
-            myLEDs = $('.powerLED');
-            let myOtherLEDs = myLEDs[1].children;            
-            myLEDs = myLEDs[0].children;
-            isLEDActive(myLEDs);
+            myLEDCase = $('.powerLED');
+            let myOtherLEDs = myLEDCase[1].children;            
+            myLEDCase = myLEDCase[0].children;
+            isLEDActive(myLEDCase);
             isLEDActive(myOtherLEDs);
-            console.log('mixer connected');
         } else if(!powerIsOn()){
             stopPlayback();
+            clearSource();
             myLEDs.removeClass('on');
             $(blueButton).removeClass('on');
             $(vaderSVG).removeClass('on');
@@ -386,7 +404,7 @@ $(document).ready(function(){
     // Assign event handler for when the 'Play' button is clicked
     $(playButton).click(function(event) {
         event.stopPropagation();
-        if(powerIsOn()){
+        if ( powerIsOn() ) {
             playTrack();
         } else {
             alert('turn the power on dumb dumb')
@@ -395,7 +413,7 @@ $(document).ready(function(){
 
     //event handler for when the "stop button is pushed"
     $(stopButton).click(function(event) {
-        stopPlayback();
+        clearSource();
         loadTrack();
     });
 });
