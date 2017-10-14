@@ -377,14 +377,6 @@ div.ui-state-default,
     margin: 1px auto 1px;
 }
 
-.eq-label {
-    display: flex;
-    align-items: center;
-    color: rgba(10, 10, 25, 1.0);
-    width: 18px;
-    font-family: 'Death-Star';
-}
-
 input {
     display: none;
 }
@@ -400,13 +392,6 @@ canvas#visualizer {
     justify-content: center;
 }
 
-input#audioFile {
-    display: flex;
-    background: transparent;
-    color: transparent;
-    width: 120px;
-}
-
 #effect2-container {
     display: flex;
     flex-direction: row;
@@ -415,15 +400,23 @@ input#audioFile {
 }
 
 .rs-bg-color {
-    background-color: rgba(40, 40, 40, 1);
+    background-color: rgba(00, 00, 00, 1);
+}
+
+.rs-tooltip-text {
+    display: none;
 }
 
 .rs-handle {
-    background-color: rgba(40, 40, 40, 1);
+    background-color: rgba(226, 229, 226, 1.0);
 }
 
 .rs-range-color {
     background-color: rgb(236, 50, 75);
+}
+
+.rs-path-color {
+    background-color: rgb(50, 50, 50);
 }
 
 .rs-border {
@@ -457,7 +450,7 @@ input#audioFile {
 }
 
 .active.on {
-    background: rgba(160, 251, 253, 1.0);
+    background: rgba(190, 251, 253, 1.0);
     width: 10px;
     height: 10px;
     border-radius: 100%;

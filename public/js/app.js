@@ -154,6 +154,7 @@ function createRoundSlider(name, type, input, sliderType, radius, width, min, ma
         max: max,
         value: initValue,
         step: step,
+        handleSize: "14 , 7",
         startAngle: stAngle,
         endAngle: endAngle,
         mouseScrollAction: true,
@@ -174,6 +175,7 @@ function createFilterSweep(name, type, input, sliderType, radius, width, min, ma
         max: max,
         step: step,
         value: 20050.0,
+        handleSize: "14 , 7",
         startAngle: stAngle,
         endAngle: endAngle,
         mouseScrollAction: true,
@@ -317,15 +319,13 @@ $(document).ready(function(){
 
     //createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step )
     createEffectControl(masterGain, '#master-gain', '#amount', 'vertical', 'min', 0, 1, 1, 0.1);
-    createEffectControl(sourceGain, '#source-gain', '#source-input', 'vertical', 'min', 0, 1, 1, 0.1);
-    createEffectControl(mainGain, '#main-gain', '#main-input', 'horizontal', 'min', 0, 1, 1, 0.1);
    
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle)
-    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 16, 7, -12, 12, 0, 0.2, 315, 225);
-    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 16, 7, -12, 12, 0, 0.2, 315, 225);
-    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 16, 8, -12, 12, 0, 0.2, 315, 225);
+    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 22, 11, -6, 6, 0, 0.4, 315, 225);
+    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 22, 11, -6, 6, 0, 0.4, 315, 225);
+    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 22, 11, -6, 6, 0, 0.4, 315, 225);
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle, step)
-    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 24, 12, 10, 20050, 315, 90, 650);
+    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 22, 11, 0.01, 20050, 315, 90, 750);
 
     // create tempo slide from the source playbackRate
     // refactor this into  effect control
