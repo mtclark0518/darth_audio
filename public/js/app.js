@@ -62,6 +62,7 @@ high.gain.value = 0.0;
 // cut off frequency controlled via dom
 var filter = audioContext.createBiquadFilter();
 filter.type = "lowpass";
+filter.frequency.value = 20050;
 filter.Q.value = 0.71;    
 
 
