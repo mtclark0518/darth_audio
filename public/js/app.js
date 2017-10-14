@@ -38,7 +38,7 @@ const sourceGain = audioContext.createGain();
 const filter = audioContext.createBiquadFilter()
     filter.type = 'lowpass';
     filter.frequency.value = 20050.0;
-    filter.Q.value = 771;
+    filter.Q.value = 0.71;
 
 // this is my bassline...my bassline...move move your wasteline...to my bassline
 // low shelf amps <= frequency value....high shelf does the opposite
