@@ -375,6 +375,7 @@ $(document).ready(function(){
             isLEDActive(myOtherLEDs);
             console.log('mixer connected');
         } else if(!powerIsOn()){
+            stopPlayback();
             myLEDs.removeClass('on');
             $(blueButton).removeClass('on');
             $(vaderSVG).removeClass('on');
@@ -394,5 +395,6 @@ $(document).ready(function(){
     //event handler for when the "stop button is pushed"
     $(stopButton).click(function(event) {
         stopPlayback();
+        loadTrack();
     });
 });
