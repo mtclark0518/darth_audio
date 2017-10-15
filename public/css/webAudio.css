@@ -201,7 +201,7 @@ div#button-container {
     border: 1px solid black;
 }
 
-.cnv {
+.btn {
     width: 100%;
     display: flex;
     height: 76px;
@@ -225,7 +225,7 @@ div#btn2-container.on {
     align-self: center;
     justify-content: center;
     fill: rgb(25, 25, 25);
-    fill-opacity: 0.01;
+    fill-opacity: 1;
 }
 
 .vader.on {
@@ -264,7 +264,7 @@ div#btn1-container.on {
     justify-content: center;
 }
 
-#pwrbtn {
+#powerbtn {
     height: 64px;
     width: 50%;
     align-self: center;
@@ -296,7 +296,7 @@ div.switch {
     width: 84%;
 }
 
-#stopbtn {
+div#stopbtn {
     width: 100%;
 }
 
@@ -308,6 +308,10 @@ div.switch {
 .stop:hover {
     fill: rgba(236, 2, 55, 1.0);
     transition: all 150ms ease;
+}
+
+div#playbtn {
+    width: 84%;
 }
 
 .play {
@@ -381,7 +385,7 @@ input {
     display: none;
 }
 
-canvas#visualizer {
+canvas.visualizer {
     width: 100%;
     height: 50px;
 }
