@@ -12,6 +12,15 @@
     font-style: normal;
 }
 
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.text {
+    color: rgb(10, 10, 20);
+}
+
 @keyframes vaderIn {
     0% {
         fill: white;
@@ -134,11 +143,6 @@
     }
 }
 
-body {
-    display: flex;
-    justify-content: center;
-}
-
 .mixer {
     display: flex;
     flex-direction: row;
@@ -150,34 +154,26 @@ body {
     background: black;
 }
 
-#mixer-group {
+.mixerComp {
     display: flex;
     flex-direction: column;
     justify-content: center;
     flex-grow: 1;
 }
 
-.element {
-    border: 1px solid black;
-}
-
-.text {
-    color: rgb(10, 10, 20);
-}
-
-div#top-controls {
+.topComp {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
 }
 
-div#bottom-controls {
+.btmComp {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 }
 
-div#slide-container {
+.slideCtr {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -186,13 +182,7 @@ div#slide-container {
     border: 1px solid black;
 }
 
-div.slide {
-    height: 50px;
-    width: 120px;
-    background: rgba(88, 89, 88, 1.0)
-}
-
-div#button-container {
+.btnCtr {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -201,49 +191,57 @@ div#button-container {
     border: 1px solid black;
 }
 
+.slide {
+    height: 50px;
+    width: 120px;
+    background: rgba(88, 89, 88, 1.0)
+}
+
 .btn {
     width: 100%;
     display: flex;
     height: 76px;
-    background: rgba(0, 38, 201, 1.0);
     justify-content: center;
 }
 
-div#btn2-container {
-    background: rgba(0, 19, 102, 1.0);
-    transition: 1250ms all ease-in;
-}
-
-div#btn2-container.on {
-    background: rgba(0, 48, 255, 1.0);
-    transition: 6000ms all ease;
-}
-
-.vader {
+.switch {
     display: flex;
-    width: 62%;
-    align-self: center;
-    justify-content: center;
-    fill: rgb(25, 25, 25);
-    fill-opacity: 1;
+    width: 70px;
+    height: 170px;
+    background: rgba(88, 89, 88, 1.0);
 }
 
-.vader.on {
-    animation: vaderIn 15000ms 14000ms 1, vader 7500ms 29000ms infinite;
+canvas.visualizer {
+    width: 100%;
+    height: 50px;
 }
 
-div#btn1-container {
+.LPFCtn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.btn1 {
     background: rgba(80, 80, 80, 1.0);
     box-shadow: 0 0 0px 0px rgba(10, 10, 10, 0.01);
     transition: all ease 400ms;
     transition-delay: 200ms;
 }
 
-div#btn1-container.on {
+.btn1.on {
     background: rgba(236, 2, 55, 1.0);
     box-shadow: 0 0 15px 1px rgba(255, 2, 59, 1.0);
     transition: background ease 500ms, box-shadow ease-out 700ms;
     transition-delay: 200ms;
+}
+
+.powerbtn {
+    height: 64px;
+    width: 50%;
+    align-self: center;
+    background: transparent;
 }
 
 .power {
@@ -258,32 +256,70 @@ div#btn1-container.on {
     transition-delay: 100ms;
 }
 
-#vaderbtn {
+.btn2 {
+    background: rgba(0, 19, 102, 1.0);
+    transition: 1250ms all ease-in;
+}
+
+.btn2.on {
+    background: rgba(0, 48, 255, 1.0);
+    transition: 6000ms all ease;
+}
+
+.vaderbtn {
     display: flex;
     align-self: center;
     justify-content: center;
 }
 
-#powerbtn {
-    height: 64px;
-    width: 50%;
-    align-self: center;
-    background: transparent;
-}
-
-div.switch {
+.vader {
     display: flex;
-    width: 70px;
-    height: 170px;
-    background: rgba(88, 89, 88, 1.0);
+    width: 62%;
+    align-self: center;
+    justify-content: center;
+    fill: rgb(25, 25, 25);
+    fill-opacity: 0.01;
+    image-rendering: optimizeQuality geometricPrecision;
+    text-rendering: geometricPrecision
 }
 
-#play-stop-pause-container {
+.vader.on {
+    animation: vaderIn 15000ms 14000ms 1, vader 7500ms 29000ms infinite;
+}
+
+.eqCtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.eq-knob {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 1px auto 1px;
+}
+
+.mgainCtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.pbrCtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.pbCtn {
     display: flex;
     flex-direction: column;
 }
 
-.buttons {
+.pbBtnCtn {
     background: rgba(226, 229, 226, 1.0);
     flex-grow: 2;
     display: flex;
@@ -292,25 +328,7 @@ div.switch {
     align-items: center;
 }
 
-.control-button {
-    width: 84%;
-}
-
-div#stopbtn {
-    width: 100%;
-}
-
-.stop {
-    fill: rgba(102, 1, 23, 1.0);
-    transition: all 150ms ease;
-}
-
-.stop:hover {
-    fill: rgba(236, 2, 55, 1.0);
-    transition: all 150ms ease;
-}
-
-div#playbtn {
+.playbtnCtn {
     width: 84%;
 }
 
@@ -329,106 +347,22 @@ div#playbtn {
     transition: all 150ms ease;
 }
 
-#play-stop-button-divider {
+.pbHR {
     width: 100%;
 }
 
-#master-gain-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-}
-
-div.ui-state-default,
-.ui-widget-content .ui-state-default {
-    background: rgba(225, 229, 225, 1.0);
-    width: 50px;
-    border: none;
-}
-
-.ui-widget-header,
-.ui-widget-content {
-    background: black;
-}
-
-.ui-widget.ui-widget-content {
-    border: 1px solid rgb(40, 40, 40);
-}
-
-.ui-slider-vertical .ui-slider-handle {
-    left: -1.2em;
-    margin-bottom: -0.635em;
-}
-
-#tempo-slider-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-}
-
-#eq-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-.eq-knob {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin: 1px auto 1px;
-}
-
-input {
-    display: none;
-}
-
-canvas.visualizer {
+.stopbtnCtn {
     width: 100%;
-    height: 50px;
 }
 
-#effect1-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.stop {
+    fill: rgba(102, 1, 23, 1.0);
+    transition: all 150ms ease;
 }
 
-#effect2-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.rs-bg-color {
-    background-color: rgba(00, 00, 00, 1);
-}
-
-.rs-tooltip-text {
-    display: none;
-}
-
-.rs-handle {
-    background-color: rgba(226, 229, 226, 1.0);
-}
-
-.rs-range-color {
-    background-color: rgb(236, 50, 75);
-}
-
-.rs-path-color {
-    background-color: rgb(50, 50, 50);
-}
-
-.rs-border {
-    border: 1px solid transparent;
-}
-
-.input-value {
-    display: none;
+.stop:hover {
+    fill: rgba(236, 2, 55, 1.0);
+    transition: all 150ms ease;
 }
 
 
@@ -469,4 +403,60 @@ canvas.visualizer {
     border-radius: 100%;
     transition: all 500ms ease;
     box-shadow: 0 0 0 0 black;
+}
+
+
+/* Customizes JqueryUI & RoundSlider Plugin  */
+
+div.ui-state-default,
+.ui-widget-content .ui-state-default {
+    background: rgba(225, 229, 225, 1.0);
+    width: 50px;
+    border: none;
+}
+
+.ui-widget-header,
+.ui-widget-content {
+    background: black;
+}
+
+.ui-widget.ui-widget-content {
+    border: 1px solid rgb(40, 40, 40);
+}
+
+.ui-slider-vertical .ui-slider-handle {
+    left: -1.2em;
+    margin-bottom: -0.635em;
+}
+
+.rs-bg-color {
+    background-color: rgba(00, 00, 00, 1);
+}
+
+.rs-tooltip-text {
+    display: none;
+}
+
+.rs-handle {
+    background-color: rgba(226, 229, 226, 1.0);
+}
+
+.rs-range-color {
+    background-color: rgb(236, 50, 75);
+}
+
+.rs-path-color {
+    background-color: rgb(50, 50, 50);
+}
+
+.rs-border {
+    border: 1px solid transparent;
+}
+
+input {
+    display: none;
+}
+
+.input-value {
+    display: none;
 }
