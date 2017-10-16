@@ -70,17 +70,21 @@ function djSith(){
     $(slideCtr).append(slide1, slide2, slide3);
     $(slide1).append(visualizer);
     $(slide3).append(filterInput, filterSlider);
+    $('<div>').addClass('text').text('filter').appendTo(slide3);    
     $(btnCtr).append(btn2, btn1);
     $(btn1).append(powerbtn);
     $(powerbtn).append(powerSVG);
     $(btn2).append(vaderbtn);
     $(vaderbtn).append(vaderSVG);
     $(btmComp).append(switch1, switch2, switch3, switch4);
+    $('<div>').addClass('text').text('eq').appendTo(switch1);
     $(switch1).append(eq1, eq2, eq3);
     $(eq1).append(hInput, hSlider);
     $(eq2).append(mInput, mSlider);
     $(eq3).append(lInput, lSlider);
+    $('<div>').addClass('text').text('master').appendTo(switch2);
     $(switch2).append(masterInput, masterSlider);
+    $('<div>').addClass('text').text('pbr').appendTo(switch3);
     $(switch3).append(tempoInput, tempoSlider);
     $(switch4).append(pbControls);
     $(pbControls).append(playbtn, btnHR, stopbtn);
@@ -396,23 +400,24 @@ function visualize() {
 //-----------------------------------------------------------------------------------------------------------------
 
 $(document).ready(function(){
+    console.log($('body'))
     djSith();
     loadTrack();
     //createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step )
     createEffectControl(masterGain, '#master-gain', '#master-input', 'vertical', 'min', 0, 1, 1, 0.1);
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle)
-    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 22, 11, -6, 6, 0, 0.4, 315, 225);
-    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 22, 11, -6, 6, 0, 0.4, 315, 225);
-    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 22, 11, -6, 6, 0, 0.4, 315, 225);
+    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 22, 11, -12, 12, 0, 1, 315, 225);
+    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 22, 11, -12, 12, 0, 1, 315, 225);
+    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 22, 11, -12, 12, 0, 1, 315, 225);
     //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle, step)
-    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 22, 11, 0.01, 20050, 315, 90, 750);
+    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 22, 11, 0.01, 20050, 315, 90, 1000);
     // create tempo slide from the source playbackRate
     // refactor this into  effect control
     $("#tempo-slider" ).slider({
         orientation: "vertical",
         range: "min",
-        min: 0,
-        max: 2,
+        min: 0.75,
+        max: 1.25,
         value: 1,
         step: 0.01,
         slide: function( event, ui ) {
@@ -433,6 +438,7 @@ $(document).ready(function(){
         $(btn2).toggleClass('on');
         
         if(powerIsOn()){
+            $('body').toggleClass('on');
             myLEDCase = $('.powerLED');
             let myOtherLEDs = myLEDCase[1].children;            
             myLEDCase = myLEDCase[0].children;
@@ -443,6 +449,7 @@ $(document).ready(function(){
             myLEDs.removeClass('on');
             $(btn2).removeClass('on');
             $(vaderSVG).removeClass('on');
+            $('body').removeClass('on');
         }
     });
     // Assign event handler for when the 'Play' button is clicked
