@@ -18,7 +18,7 @@
   
 #### more details coming soon
 #### Audio Source Credit  
-  [gta - help me (vip)] (https://soundcloud.com/wearegta-moderators/gta-help-me-vip)    
+  [gta - help me (vip)](https://soundcloud.com/wearegta-moderators/gta-help-me-vip)    
 ## References
   https://webaudio.github.io/web-audio-api/  
   https://smartech.gatech.edu/bitstream/handle/1853/54587/WAC2016-48.pdf?sequence=1&isAllowed=y  
