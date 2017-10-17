@@ -13,7 +13,7 @@
   combines aspects from a variety of different WAA tutorials  
   stylistically designed to resemble Darth Vader's chest plate from 'Return of the Jedi'  
   when the power button is clicked an audio source file is loaded.  
-  ui allows for dynamically adjusting volume and playbackrate(tempo)
+  ui allows for dynamically adjusting volume and playbackrate(tempo)  
   main audio effect uses 4 Biquad Filter Components to create a 3-band equalizer with a lowpass filter sweep.  
   
 #### more details coming soon
