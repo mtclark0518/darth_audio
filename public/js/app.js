@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-// CREATE DARTH AUDIO MIXER UI-------------------------------------------------------------------------------------
+// CREATE DARTH AUDIO MIXER USER COMPONENTS-------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 const mixer = $('.mixer');
@@ -17,8 +17,8 @@ const btmComp = $('<div>').addClass('btmComp');
 const slideCtr = $('<div>').addClass('slideCtr');
 const btnCtr = $('<div>').addClass('btnCtr');
 
-const slide1 = $('<div>').addClass('cnvCtn slide')
-const slide2 = $('<div>').addClass('slide')
+const slide1 = $('<div>').addClass('cnvCtn slide');
+const slide2 = $('<div>').addClass('slide');
 const slide3 = $('<div>').addClass('LPFCtn slide');
 
 const btn1 = $('<div>').addClass('btn1 btn');
@@ -60,9 +60,9 @@ const stopSVG = $('.stop');
 const pbControls = $('<div>').addClass('pbBtnCtn');
 const btnHR = $('<hr>').addClass('pbHR');
 
+// canvas element for visuals
 const visualizer = $('<canvas>').addClass('visualizer');
-let source = null;
-
+// function that assmebles the dom elements
 function djSith(){    
     $(mixer).append(mixerComp);
     $(mixerComp).append(topComp, btmComp);
@@ -114,15 +114,15 @@ const LEDContainer2 = function() {
         console.log('updated powerLED');
     }
 }
-
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-// WEB AUDIO COMPONENT SETUP---------------------------------------------------------------------------------------
+// WEBAUDIO API COMPONENT SETUP---------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-
 // Web Audio Api Instance
 const audioContext = new (window.AudioContext || window.webkitAudioContext)(); // Our audio context
+//inital audio source is set to null, loads when user pressed power button
+let source = null;
 const analyserNode = audioContext.createAnalyser();
 analyserNode.smoothingTimeConstant = 0.90;
 const compressorNode = audioContext.createDynamicsCompressor();
@@ -154,68 +154,8 @@ const high = audioContext.createBiquadFilter();
     high.type = 'highshelf';
     high.frequency.value = 2000.0 ;
     high.gain.value = 0.0;
+    // creates audio grid
 
-//-----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-// UTILITY FUNCTIONS----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-
-//utility function to check 'power' state
-function powerIsOn(){
-    console.log('fugittaboutit')
-    var pwr = $(btn1).hasClass('on') ? true : false;
-    return pwr;
-}
-// utility function sets 'LED' state params and ties to power
-function isLEDActive(LEDs) {
-    if ( powerIsOn() ) {
-        let amount = masterGain.gain.value * 100;
-        $(LEDs).each(function() {
-            let min = $(this).data().min;
-            console.log(min);
-            if (min <= amount) {
-                $(this).removeClass('inactive').removeClass('active').addClass('active');
-            } else {
-                $(this).removeClass('active').removeClass('inactive').addClass('inactive');
-            }
-        });
-    } 
-}
-
-//-----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-// PLAYBACK FUNCTIONS----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-
-
-//requests the audio track for the application
-function loadTrack(){
-    console.log('inside loadtrack');
-    request = new XMLHttpRequest();
-    request.open('GET', './assets/audio/gta.mp3', true);
-    request.responseType = 'arraybuffer';
-    request.onload = function() {
-        let mp3ArrayBuffer = request.response;
-        decodeArrayBuffer(mp3ArrayBuffer); 
-    };
-    request.send();
-}
-
-//process the buffer and prep for playback
-function decodeArrayBuffer(mp3ArrayBuffer) {
-    audioContext.decodeAudioData(mp3ArrayBuffer, function (decodedAudioData) {
-        // Clear any existing audio source that we might be using        
-        clearSource();
-        // create our audio source 
-        source = audioContext.createBufferSource();
-        source.buffer = decodedAudioData;
-        console.log(source);
-        connectMixer();
-    }); 
-}
-// creates audio grid
 function connectMixer() {
     source.connect(sourceGain);
     sourceGain.connect(filter);
@@ -228,6 +168,35 @@ function connectMixer() {
     masterGain.connect(analyserNode);
     analyserNode.connect(audioContext.destination);    
     console.log('mixer connected')
+}
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// PLAYBACK FUNCTIONS----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//requests the audio track for the application
+function loadTrack(){
+    console.log('inside loadtrack');
+    request = new XMLHttpRequest();
+    request.open('GET', './assets/audio/gta.mp3', true);
+    request.responseType = 'arraybuffer';
+    request.onload = function() {
+        let mp3ArrayBuffer = request.response;
+        decodeArrayBuffer(mp3ArrayBuffer); 
+    };
+    request.send();
+}
+//process the buffer and prep for playback
+function decodeArrayBuffer(mp3ArrayBuffer) {
+    audioContext.decodeAudioData(mp3ArrayBuffer, function (decodedAudioData) {
+        // Clear any existing audio source that we might be using        
+        clearSource();
+        // create our audio source 
+        source = audioContext.createBufferSource();
+        source.buffer = decodedAudioData;
+        console.log(source);
+        connectMixer();
+    }); 
 }
 // starts audio playback
 function playTrack(){
@@ -255,26 +224,24 @@ function clearSource(){
         $(vaderSVG).removeClass('on');
     }
 }
-
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 // UI COMPONENT CONSTRUCTORS----------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-
 // constructor functions for ui round sliders (knobs) using jquery module
-function createRoundSlider(name, type, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle){
+function createRoundSlider(name, type, input){
     $(name).roundSlider({
-        sliderType: sliderType,
-        radius: radius,
-        width: width,
-        min: min,
-        max: max,
-        value: initValue,
-        step: step,
+        sliderType: 'min-range',
+        radius: 22,
+        width: 11,
+        min: -12,
+        max: 12,
+        step: 1,        
+        value: 0,
         handleSize: "14 , 7",
-        startAngle: stAngle,
-        endAngle: endAngle,
+        startAngle: 315,
+        endAngle: 225,
         mouseScrollAction: true,
         change: function(event){
             let eq = $(name).data('roundSlider');
@@ -282,20 +249,19 @@ function createRoundSlider(name, type, input, sliderType, radius, width, min, ma
         }
     });
 }
-
 // creates the filter knob - can be refactored into above function
-function createFilterSweep(name, type, input, sliderType, radius, width, min, max, stAngle, endAngle, step){
+function createFilterSweep(name, type, input){
     $(name).roundSlider({
-        sliderType: sliderType,
-        radius: radius,
-        width: width,
-        min: min,
-        max: max,
-        step: step,
+        sliderType: 'min-range',
+        radius: 22,
+        width: 11,
+        min:0,
+        max: 20050.0,
+        step: 1000,
         value: 20050.0,
         handleSize: "14 , 7",
-        startAngle: stAngle,
-        endAngle: endAngle,
+        startAngle: 315,
+        endAngle: 90,
         mouseScrollAction: true,
         change: function(event){
             let eq = $(name).data('roundSlider');
@@ -305,14 +271,14 @@ function createFilterSweep(name, type, input, sliderType, radius, width, min, ma
 }
 
 // creates tempo and master volume sliders (different from above round sliders) 
-function createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step ){
+function createEffectControl( elemID, controlName, inputValueID){
     $(elemID).slider({
-        orientation : orientation,
-        range : range,
-        min : min,
-        max : max,
-        value : initValue,
-        step : step,
+        orientation : 'vertical',
+        range : 'min',
+        min : 0,
+        max : 1,
+        value : 1,
+        step : 0.1,
         slide : function(event, ui) {
             let input = $(inputValueID).val(ui.value);
             let val = input[0].value;
@@ -325,23 +291,31 @@ function createEffectControl(controlName, elemID, inputValueID, orientation, ran
         }
     });
 }
-
-
-
+function createTempoSlider(elemId, controlName, inputValueID ){
+    $(elemId).slider({
+        orientation: "vertical",
+        range: "min",
+        min: 0.50,
+        max: 1.50,
+        value: 1.00,
+        step: 0.01,
+        slide: function( event, ui ) {
+            let input = $( inputValueID ).val(ui.value);
+            let currentTempo = input[0].value
+            source.playbackRate.value = currentTempo;
+        }
+    });
+}
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-//CANVAS VISUALIZATIONS FROM ANALYZER NODE----------------------------------------------------------------------
+//CANVAS VISUALIZATION FUNCTION----------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-
-// canvas variable definitions
-var canvas = $(visualizer)[0];
-console.log(canvas);
-var canvasContext = canvas.getContext("2d");
-
-
-// visualize function adapted from web-audio-api voice-change-o-matic
 function visualize() {
+    // canvas variable definitions
+    const canvas = $(visualizer)[0];
+    const canvasContext = canvas.getContext("2d");
+    // visualize function adapted from web-audio-api voice-change-o-matic
     // define the canvas where animation occurs
     WIDTH = canvas.width;
     HEIGHT = canvas.height;
@@ -355,7 +329,6 @@ function visualize() {
     var bufferLength = analyserNode.frequencyBinCount;
     // array of 8-bit ints - length set to our buffer length
     var dataArray = new Uint8Array(bufferLength);
-    // animation function
     function draw() {
         // calls the draw function - this function - recurrsively
         drawVisual = requestAnimationFrame(draw);
@@ -373,7 +346,6 @@ function visualize() {
         const sliceWidth = WIDTH * 1.0 / bufferLength;
         // x-axis
         let x = 0;
-        
         for (let i = 0; i < bufferLength; i++) {
             let v = dataArray[i] / 128;
             let y = v * HEIGHT / 2;
@@ -392,42 +364,47 @@ function visualize() {
     }
     draw();
 }
-
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// UTILITY FUNCTIONS----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//utility function to check 'power' state
+function powerIsOn(){
+    console.log('fugittaboutit')
+    var pwr = $(btn1).hasClass('on') ? true : false;
+    return pwr;
+}
+// utility function sets 'LED' state params and ties to power
+function isLEDActive(LEDs) {
+    if ( powerIsOn() ) {
+        let amount = masterGain.gain.value * 100;
+        $(LEDs).each(function() {
+            let min = $(this).data().min;
+            console.log(min);
+            if (min <= amount) {
+                $(this).removeClass('inactive').removeClass('active').addClass('active');
+            } else {
+                $(this).removeClass('active').removeClass('inactive').addClass('inactive');
+            }
+        });
+    } 
+}
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 // DOCUMENT READY--------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------
-
 $(document).ready(function(){
-    console.log($('body'))
+    
     djSith();
-    loadTrack();
-    //createEffectControl(controlName, elemID, inputValueID, orientation, range, min, max, initValue, step )
-    createEffectControl(masterGain, '#master-gain', '#master-input', 'vertical', 'min', 0, 1, 1, 0.1);
-    //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle)
-    createRoundSlider('#low-slider', low, '#low-input', 'min-range', 22, 11, -12, 12, 0, 1, 315, 225);
-    createRoundSlider('#mid-slider', mid, '#mid-input', 'min-range', 22, 11, -12, 12, 0, 1, 315, 225);
-    createRoundSlider('#high-slider', high, '#high-input', 'min-range', 22, 11, -12, 12, 0, 1, 315, 225);
-    //createRoundSlider(name, type, property, input, sliderType, radius, width, min, max, initValue, step, stAngle, endAngle, step)
-    createFilterSweep('#filter-slider', filter, '#filter-input', 'min-range', 22, 11, 0.01, 20050, 315, 90, 1000);
-    // create tempo slide from the source playbackRate
-    // refactor this into  effect control
-    $("#tempo-slider" ).slider({
-        orientation: "vertical",
-        range: "min",
-        min: 0.75,
-        max: 1.25,
-        value: 1,
-        step: 0.01,
-        slide: function( event, ui ) {
-            let tempo = $("#tempo-slider").slider("value");
-            console.log(tempo);
-            source.playbackRate.value = tempo;
-            }
-    });
-    $( "#tempo-input" ).val( $( "#tempo-slider" ).slider( "value" ) );
-    // event listener for clicking on power button
+    createEffectControl('#master-gain', masterGain, '#master-input');
+    createTempoSlider('#tempo-slider', source, '#tempo-input');    
+    createRoundSlider('#low-slider', low, '#low-input');
+    createRoundSlider('#mid-slider', mid, '#mid-input');
+    createRoundSlider('#high-slider', high, '#high-input');
+    createFilterSweep('#filter-slider', filter, '#filter-input');
+    
     // triggers ui transitions 
     $(btn1).click(function(event) {
         console.log('clickity')
@@ -438,6 +415,7 @@ $(document).ready(function(){
         $(btn2).toggleClass('on');
         
         if(powerIsOn()){
+            loadTrack();
             $('body').toggleClass('on');
             myLEDCase = $('.powerLED');
             let myOtherLEDs = myLEDCase[1].children;            
