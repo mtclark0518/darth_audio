@@ -17,9 +17,9 @@
   main audio effect uses 4 Biquad Filter Components to create a 3-band equalizer with a lowpass filter sweep.  
   
 #### more details coming soon
-# Audio Source Credit  
-  gta - help me (vip)  
-# References
+#### Audio Source Credit  
+  [gta - help me (vip)] (https://soundcloud.com/wearegta-moderators/gta-help-me-vip)    
+## References
   https://webaudio.github.io/web-audio-api/  
   https://smartech.gatech.edu/bitstream/handle/1853/54587/WAC2016-48.pdf?sequence=1&isAllowed=y  
   https://github.com/mdn/voice-change-o-matic  
