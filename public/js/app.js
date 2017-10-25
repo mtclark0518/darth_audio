@@ -154,8 +154,14 @@ const high = audioContext.createBiquadFilter();
     high.type = 'highshelf';
     high.frequency.value = 2000.0 ;
     high.gain.value = 0.0;
-    // creates audio grid
 
+
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// PLAYBACK FUNCTIONS----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
+// creates audio grid
 function connectMixer() {
     source.connect(sourceGain);
     sourceGain.connect(filter);
@@ -168,15 +174,13 @@ function connectMixer() {
     masterGain.connect(analyserNode);
     analyserNode.connect(audioContext.destination);    
     console.log('mixer connected')
+    $(vaderSVG).removeClass('loading');
 }
-//-----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-// PLAYBACK FUNCTIONS----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------------
+
 //requests the audio track for the application
 function loadTrack(){
     console.log('inside loadtrack');
+    $(vaderSVG).addClass('loading');
     request = new XMLHttpRequest();
     request.open('GET', './assets/audio/gta.mp3', true);
     request.responseType = 'arraybuffer';
@@ -371,8 +375,7 @@ function visualize() {
 //-----------------------------------------------------------------------------------------------------------------
 //utility function to check 'power' state
 function powerIsOn(){
-    console.log('fugittaboutit')
-    var pwr = $(btn1).hasClass('on') ? true : false;
+    let pwr = $(btn1).hasClass('on') ? true : false;
     return pwr;
 }
 // utility function sets 'LED' state params and ties to power
